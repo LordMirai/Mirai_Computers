@@ -28,8 +28,9 @@ MCom.Colors.PurpleDark = Color(80,0,140)
 MCom.Colors.Indigo = Color(30,0,135)
 
 
--- ? status
-MCom.Status = MCom.Status or {}
+
+
+MCom.Status = MCom.Status or {} -- ^ Status codes for devices
 
 MCom.Status.None = 0
 MCom.Status.Waiting = 1
@@ -39,12 +40,11 @@ MCom.Status.Failed = 4
 MCom.Status.Errored = 5
 
 
--- ? command execution codes
-MCom.Execution = MCom.Execution or {}
+MCom.Execution = MCom.Execution or {} -- ^ execution codes for commands
 
-MCom.Execution.None = 0
-MCom.Execution.Success = 1
-MCom.Execution.Fail = 2
-MCom.Execution.Error = 3
-MCom.Execution.Unknown = 4
-MCom.Execution.Unauthorized = 5
+MCom.Execution.None = 0 -- ? not executed yet or nothing to execute
+MCom.Execution.Success = 1 -- ? executed successfully
+MCom.Execution.Fail = 2 -- ! executed but failed
+MCom.Execution.Error = 3 -- ! errored
+MCom.Execution.Unknown = 4 -- ? unknown error
+MCom.Execution.Unauthorized = 5 -- ! unauthorized (admin only or something)
