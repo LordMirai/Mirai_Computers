@@ -1,5 +1,5 @@
 ENT.Type = "anim"
-ENT.Base = "base_anim"
+ENT.Base = "mcom_ent_base"
 
 ENT.PrintName = "Computer"
 ENT.Category = "Mirai Computer System"

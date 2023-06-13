@@ -1,0 +1,2 @@
+MCom = MCom or {}
+

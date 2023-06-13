@@ -1,7 +1,7 @@
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 
-ENT.PrintName = "Peripheral"
+ENT.PrintName = "ENTITY BASE"
 ENT.Category = "Mirai Computer System"
 ENT.Spawnable = false
 ENT.AdminOnly = true
