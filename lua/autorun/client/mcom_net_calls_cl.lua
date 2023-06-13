@@ -37,3 +37,7 @@ net.Receive("MCom_Message", function()
 
     MCom.Message(msg,col)
 end)
+
+net.Receive("MCom_AdminMenu", function()
+    MCom.openAdminMenu()
+end)

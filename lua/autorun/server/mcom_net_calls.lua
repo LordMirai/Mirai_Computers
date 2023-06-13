@@ -19,6 +19,11 @@ MCom.net.broadcast(msg,col)
     net.WriteColor(col)
     net.Broadcast()
 end
+    
+function MCom.net.openMenu(ply)
+    net.Start("MCom_AdminMenu")
+    net.Send(ply)
+end
 
 
 

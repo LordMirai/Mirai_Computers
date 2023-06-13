@@ -83,9 +83,14 @@ hook.Add("PlayerSay", "MCom_Chat_Commands", function(ply, txt, team)
     if (cmd[1] or "") == "?" then -- probably MCom command
         cmd = string.sub(cmd, 2)
         if cmd == "help" then
-            -- print chat command elp
+            -- print chat command help
         end
+
+        if cmd == "menu" then
+            MCom.openMenu(ply)
+        end
+        
+        
+        return ""
     end
-
-
 end)
