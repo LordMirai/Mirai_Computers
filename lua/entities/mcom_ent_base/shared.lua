@@ -14,6 +14,9 @@ ENT.Contact = "lordmiraithegod@gmail.com | Lord Mirai(未来)#0039"
 ENT.Editable = true
 
 MCom = MCom or {}
+MCom.net = MCom.net or {}
+MCom.Interpreter = MCom.Interpreter or {}
+MCom.Groups = MCom.Groups or {}
 
 function ENT:SetupDataTables()
 	

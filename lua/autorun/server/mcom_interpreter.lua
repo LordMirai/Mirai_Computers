@@ -57,8 +57,16 @@ end
 
 
 function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function. origin = terminal entity (computer) or nil if console
+    -- ? format: group* command arg1 arg2 arg3
+    -- *Group can be ignored if the command is not in a group 
     local cmd, args, argsNoCase = MCom.Interpreter.extractArgs(stringIn, false, true, true) -- extract the command and the args
-    local cmdData = MCom.Commands[cmd] -- get the command data
+    
+    cmd = string.lower(cmd)
+    local cmdData = MCom.Commands[cmd] -- get the command data, first seeks standalone
+    local group = MCom.Groups[cmd]
+    if IsValid(group) then -- group exists, cmd not standalone
+        cmdData = group[cmd]
+    end
 
     if not cmdData then -- if the command doesn't exist
         local msg = string.format("Command %s does not exist.", cmd)
@@ -80,12 +88,14 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
         return MCom.stdErr("Command is disabled.")
     end
 
-    local wrappedFunction = MCom.Interpreter.wrapFunction(ply, origin, cmdData, args, argsNoCase) -- wrap the function
+    local arguments = cmdData.ignoreCase and argsNoCase or args -- use the correct arguments, from command table
+
+    local wrappedFunction = MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap the function
     return wrappedFunction() -- finally execute the function
 end
 
 
-function MCom.Interpreter.wrapFunction(ply, origin, cmdData, args, argsNoCase) -- wrap the function
+function MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap the function
     -- only preconditions are required to pass, if they exist
 
     if cmdData.admin then
@@ -94,8 +104,6 @@ function MCom.Interpreter.wrapFunction(ply, origin, cmdData, args, argsNoCase) -
             return MCom.stdErr("Admin Only - "..cmdData.name, MCom.Execution.Unauthorized)
         end
     end
-
-    local arguments = cmdData.ignoreCase and argsNoCase or args -- use the correct arguments, from command table
 
     local precond = true
     if cmdData.preconditions then

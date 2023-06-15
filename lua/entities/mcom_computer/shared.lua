@@ -19,6 +19,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("String", 0, "Serial")
     self:NetworkVar("String", 1, "MAC")
     self:NetworkVar("String", 2, "IP")
+    self:NetworkVar("Entity", 0, "User")
 end
 
 ENT.sounds = {

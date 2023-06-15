@@ -3,6 +3,7 @@ MCom.net = MCom.net or {}
 
 local net = net
 
+-- ! Clientside equivalent for net calls
 
 -- ! SENDING
 function MCom.net.reqSendMessage(ply, msg, col)
@@ -17,8 +18,23 @@ function MCom.net.reqSendMessage(ply, msg, col)
 end
 
 
+function MCom.net.terminalCommand(ply, origin, cmd)
+    if not ply:IsValid() then 
+        ply = Entity(0) -- default to worldspawn
+        return
+    end
+    net.Start("MCom_ExecuteCommand")
+    net.WriteEntity(ply)
+    net.WriteEntity(self)
+    net.WriteString(cmd)
+    net.SendToServer()
+end
 
-
+function MCom.net.terminalClose(ent)
+    net.Start("MCom_CloseTerminal")
+    net.WriteEntity(ent)
+    net.SendToServer()
+end
 
 
 

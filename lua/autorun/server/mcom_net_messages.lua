@@ -9,3 +9,6 @@ util.AddNetworkString("MCom_ComputerMenu")
 util.AddNetworkString("MCom_LazyLoad")
 util.AddNetworkString("MCom_LazyLoadReturnCL")
 
+
+util.AddNetworkString("MCom_ExecuteCommand")
+util.AddNetworkString("MCom_CloseTerminal")

@@ -27,17 +27,18 @@ function MCom.Message(ply, msg, col, full)
     col = col or MCom.Colors.White
     msg = string.Trim(msg)
     full = full or false
+    if not IsPlayer(ply) or not ply:IsValid() then
+        return
+    end
     MCom.net.sendMessage(ply, msg, col, full)
 end
 
 function MCom.Error(ply, msg)
-    msg = string.Trim(msg)
-    MCom.net.sendMessage(ply, msg, MCom.Colors.Red)
+    MCom.Message(ply, msg, MCom.Colors.Red)
 end
 
 function MCom.Warning(ply, msg)
-    msg = string.Trim(msg)
-    MCom.net.sendMessage(ply, msg, MCom.Colors.Orange)
+    MCom.Message(ply, msg, MCom.Colors.Yellow)
 end
 
 function MCom.Broadcast(msg, col)
@@ -50,7 +51,7 @@ function MCom.tellAdmins(msg, col)
     col = col or MCom.Colors.White
     msg = string.Trim(msg)
     for k,v in pairs(MCom.getAdmins()) do
-        MCom.net.sendMessage(v, msg, col)
+        MCom.Message(v, msg, col)
     end
 end
 
@@ -93,6 +94,6 @@ hook.Add("PlayerSay", "MCom_Chat_Commands", function(ply, txt, team)
         end
         
         
-        return ""
+        return "" -- comment this out to allow chat commands to be sent to chat
     end
 end)

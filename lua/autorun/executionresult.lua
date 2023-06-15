@@ -53,3 +53,7 @@ end
 function MCom.success(msg)
     return MCom.ExecutionResult.new(msg, MCom.Execution.Success, "Execution", "Command executed successfully.")
 end
+
+function MCom.stdout(ply, origin, msg)
+    origin:output(msg)
+end

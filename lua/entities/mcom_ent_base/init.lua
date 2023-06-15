@@ -14,6 +14,16 @@ function ENT:Initialize()
 
     self.MComEntity = true
 	self.useCooldown = 0.5
+	
+	self.scanTime = 1 -- time between scans
+	self.shouldScan = false -- set to true to start scanning
+	self.scanRange = 300
+
+	self.whitelist = false -- set to true to only scan for ents in the ignoredEnts table
+	self.blacklist = true -- make sure these two never coincide
+	self.ignoredEnts = { -- ignored entities for scan
+		["brush"] = true,
+	}
 
 	self.damageLevel = 0
 	self.faultTreshold = 5
@@ -33,6 +43,8 @@ function ENT:Initialize()
 	local phys = self:GetPhysicsObject()
 	if self:IsValid() then self:Activate() end
 	if phys:IsValid() then phys:Wake() end
+
+	self:startScan()
 end
 
 function ENT:Use(ply)
@@ -97,4 +109,49 @@ function ENT:generateMAC(blockSize) -- default block size 2
 	end
 	mac = string.sub(mac, 2) -- remove first dash
 	self.mac = mac -- Will be a 6-block MAC address "XX-XX-XX-XX-XX-XX" by default
+end
+
+function ENT:startScan() -- tick
+	if not self.shouldScan then return end
+	timer.Simple(self.scanTime, function()
+		if not self.shouldScan then return end
+		if not IsValid(self) then return end
+		self:scan()
+		self:startScan() -- repeat
+	end)
+end
+
+function ENT:scan() -- get all valid ents and call scanCallback on them
+	local ents = ents.FindInSphere(self:GetPos(), self.scanRange)
+	for k, ent in pairs(ents) do
+		if ent.MComEntity and ent ~= self then
+			if self.whitelist and not self.ignoredEnts[ent:GetClass()] then continue end
+			if self.blacklist and self.ignoredEnts[ent:GetClass()] then continue end
+			self:scanCallback(ent)
+		end
+	end
+
+end
+
+function ENT:scanCallback(ent)
+	-- scan action on ent(s)
+end
+
+function ENT:enableScan()
+	self.shouldScan = true
+	self:startScan()
+end
+
+function ENT:disableScan()
+	self.shouldScan = false
+end
+
+function ENT:scanSetup(scanTime, scanRange, ignoredEnts, useWhitelist) -- put this in init()
+	useWhitelist = useWhitelist or false
+	self.shouldScan = true
+	self.scanTime = math.Clamp((scanTime or 1), 0.1, 300)
+	self.scanRange = math.Clamp((scanRange or 300), 0, 10000)
+	self.whitelist = useWhitelist
+	self.blacklist = not useWhitelist
+	self.ignoredEnts = ignoredEnts or {}
 end

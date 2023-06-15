@@ -32,8 +32,6 @@ end
 
 
 
-
-
 -- * RECEIVING
 net.Receive("MCom_RequestMessage", function(len,ply)
     local ent = net.ReadEntity()
@@ -48,3 +46,18 @@ net.Receive("MCom_RequestMessage", function(len,ply)
     end
 end)
 
+net.Receive("MCom_ExecuteCommand", function(len, ply)
+    local issuer = net.ReadEntity()
+    local origin = net.ReadEntity()
+    local cmd = net.ReadString()
+
+    if not IsValid(issuer) or not IsValid(origin) then return end
+    origin:executeCommand(issuer, cmd)
+end)
+
+net.Receive("MCom_CloseTerminal", function(len, ply)
+    print(ply, "closed terminal")
+    local terminal = net.ReadEntity()
+    if not IsValid(terminal) then return end
+    terminal:endUse()
+end)
