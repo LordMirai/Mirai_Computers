@@ -5,7 +5,7 @@ include("shared.lua")
 
 function ENT:Initialize()
 	self:SetModel("models/props_phx/construct/metal_tubex2.mdl") -- set model here
-	self:PhysicsInit(SOLID_VPHYSICS)
+	
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid(SOLID_VPHYSICS)
 	self:SetUseType(SIMPLE_USE)
@@ -26,7 +26,9 @@ function ENT:Initialize()
 	self.serial = "COMP-0000000000" -- only placeholders. use generateSerial() to generate a serial
 	self.mac = "XX-XX-XX-XX-XX-XX" -- use generateMAC() to generate a MAC address
 
+	
 	self:init()
+	self:PhysicsInit(SOLID_VPHYSICS) -- set here to adjust for model change
 
 	local phys = self:GetPhysicsObject()
 	if self:IsValid() then self:Activate() end

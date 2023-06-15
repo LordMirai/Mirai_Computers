@@ -17,7 +17,7 @@ SWEP.Weight = 501
 SWEP.AutoSwitchTo = true
 SWEP.AutoSwitchFrom = false
 
-SWEP.ViewModel = "" -- some wrench
+SWEP.ViewModel = "" -- some wrench, must be a viewmodel
 SWEP.WorldModel = ""
 
 SWEP.Cooldown = 0.6 -- cooldown for clicking

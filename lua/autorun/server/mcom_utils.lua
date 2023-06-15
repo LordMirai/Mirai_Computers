@@ -23,10 +23,11 @@ function MCom.entUseCooldown(ply, ent)
     end
 end
 
-function MCom.Message(ply, msg, col)
+function MCom.Message(ply, msg, col, full)
     col = col or MCom.Colors.White
     msg = string.Trim(msg)
-    MCom.net.sendMessage(ply, msg, col)
+    full = full or false
+    MCom.net.sendMessage(ply, msg, col, full)
 end
 
 function MCom.Error(ply, msg)
@@ -83,6 +84,7 @@ hook.Add("PlayerSay", "MCom_Chat_Commands", function(ply, txt, team)
     if (cmd[1] or "") == "?" then -- probably MCom command
         cmd = string.sub(cmd, 2)
         if cmd == "help" then
+            MCom.Message(ply, "MCom Chat Commands:", MCom.Colors.White, true)
             -- print chat command help
         end
 

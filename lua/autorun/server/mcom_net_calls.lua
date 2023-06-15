@@ -6,14 +6,15 @@ local net = net
 -- ! This file serves the simple net messages, without cluttering the main files. This covers both sending and receiving messages (serverside)
 
 -- ! SENDING
-function MCom.net.sendMessage(ply,msg,col)
+function MCom.net.sendMessage(ply,msg,col,full)
     net.Start("MCom_Message")
     net.WriteString(msg)
     net.WriteColor(col)
+    net.WriteBool(full or false)
     net.Send(ply)
 end
 
-MCom.net.broadcast(msg,col)
+function MCom.net.broadcast(msg,col)
     net.Start("MCom_Message")
     net.WriteString(msg)
     net.WriteColor(col)

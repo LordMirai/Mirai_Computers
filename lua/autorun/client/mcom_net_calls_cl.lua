@@ -34,8 +34,9 @@ end
 net.Receive("MCom_Message", function()
     local msg = net.ReadString()
     local col = net.ReadColor()
+    local full = net.ReadBool()
 
-    MCom.Message(msg,col)
+    MCom.Message(msg,col,full)
 end)
 
 net.Receive("MCom_AdminMenu", function()

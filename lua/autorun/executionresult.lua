@@ -6,7 +6,7 @@ MCom.ExecutionResult = {}
 MCom.ExecutionResult.__index = MCom.ExecutionResult
 
 
-function MCom.ExecutionResult.__call(self, message, errorCode, category, suggestions) -- ! Test intensively if it actually works like this
+function MCom.ExecutionResult.new(message, errorCode, category, suggestions)
     message = message or "No message provided."
     errorCode = errorCode or MCom.Execution.None
     category = category or "None"
@@ -14,7 +14,7 @@ function MCom.ExecutionResult.__call(self, message, errorCode, category, suggest
 
     local self = setmetatable({}, MCom.ExecutionResult)
     self.message = message -- i.e. "Missing argument #2"
-    self.errorCode = errorCode -- i.e. MCom.Execution.ArgumentError
+    self.errorCode = errorCode -- i.e. MCom.Execution.Execution
     self.category = category -- i.e. "Argument"
     self.suggestions = suggestions -- i.e. "Use help command to get more information."
 
@@ -47,9 +47,9 @@ end
 function MCom.stdErr(msg, categ, suggestion)
     categ = categ or "General"
     suggestion = suggestion or "Use help command to get more information."
-    return MCom.ExecutionResult(msg, MCom.Execution.Error, categ, suggestion)
+    return MCom.ExecutionResult.new(msg, MCom.Execution.Error, categ, suggestion)
 end
 
 function MCom.success(msg)
-    return MCom.ExecutionResult(msg, MCom.Execution.Success, "Execution", "Command executed successfully.")
+    return MCom.ExecutionResult.new(msg, MCom.Execution.Success, "Execution", "Command executed successfully.")
 end

@@ -3,7 +3,7 @@ MCom.net = MCom.net or {}
 
 function MCom.Message(msg, col, full)
     full = full or false
-    local head = full and "[Mirai Computers]" or "[MCom] "
+    local head = full and "[Mirai Computers] " or "[MCom] "
 
     chat.AddText(MCom.Colors.Yellow, head, col, msg)
 end

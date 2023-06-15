@@ -5,6 +5,7 @@ include("shared.lua")
 
 
 function ENT:init()
+	self:SetModel("models/props_office/computer_monitor04.mdl")
 	self.isComputer = true
 	self.isInUse = false
 
