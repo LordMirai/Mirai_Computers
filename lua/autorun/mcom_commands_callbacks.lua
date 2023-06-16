@@ -34,10 +34,37 @@ function MCom.Callbacks["os"](ply, origin)
 end
 
 function MCom.Callbacks["os_shutdown"](ply, origin)
-    
+    origin:output("Shutting down...")
+    origin:wait(1, function(origin) -- this effectively waits for one tick then proceeds to execute the rest
+        origin:shutdown()
+    end, origin)
 end
 
 function MCom.Callbacks["os_restart"](ply, origin)
-    
+    origin:output("Restarting...")
+    origin:wait(1, function(origin)
+        origin:shutdown()
+        origin:startup()
+    end, origin)
 end
 
+--[[
+    What's stupid about this implementation of :wait() is that if you want to implement this idea:
+    >>do thing
+    sleep for 2 ticks
+    do other thing
+    sleep for 3 ticks
+    do smth else<<
+    
+    you'd need to do 
+    function()
+        do thing
+        origin:wait(2, function(origin)
+            do other thing
+            origin:wait(3, function(origin)
+                do smth else
+            end, origin)
+        end, origin)
+    end
+
+]]

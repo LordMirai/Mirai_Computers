@@ -182,3 +182,13 @@ end
 function ENT:tick()
 	self:incTC() -- increment tick counter
 end
+
+function ENT:wait(ticks, callback, ...)
+	local args = {...}
+	ticks = math.Clamp(math.floor(ticks),0,300)
+	local timeTowait = self.scanTime * ticks
+	
+	timer.Simple(timeTowait, function()
+		callback(unpack(args))
+	end)
+end
