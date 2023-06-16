@@ -30,7 +30,7 @@ MCom.Colors.Indigo = Color(30,0,135)
 
 
 
-MCom.Status = MCom.Status or {} -- ^ Status codes for devices
+MCom.Status = MCom.Status or {} -- ^ Status codes for devices or other things. Might even go unused
 
 MCom.Status.None = 0
 MCom.Status.Waiting = 1

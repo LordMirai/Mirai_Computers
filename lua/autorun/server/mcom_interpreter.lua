@@ -65,10 +65,10 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
     local cmdData = MCom.Commands[cmd] -- get the command data, first seeks standalone
     local group = MCom.Groups[cmd]
     if IsValid(group) then -- group exists, cmd not standalone
-        cmdData = group[cmd]
+        cmdData = group.action and group or group[cmd] -- if the group has its own action, use that, otherwise use the command
     end
 
-    if not cmdData then -- if the command doesn't exist
+    if not cmdData then -- the command doesn't exist
         local msg = string.format("Command %s does not exist.", cmd)
         MCom.Interpreter.warning(msg)
         MCom.Error(ply, msg)

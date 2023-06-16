@@ -12,42 +12,44 @@ function ENT:init()
 	self:generateSerial()
 	self:generateMAC()
 
+	self:SetState(MCom.ComputerState.OFF)
+
 	self.targetEnts = {
 		["player"] = true
 	}
 
-	self:scanSetup(3, 200, self.targetEnts, true) -- only tick for players, once per 3 seconds, 200 range
+	self:scanSetup(1, 200, self.targetEnts, true) -- only tick for players, once per second, 200 range
 
 
 	self.Architecture = { -- to hold Registers and Memory
 		Registers = { -- initialize 26 general registers and a tick counter. This will very likely not be used too much tho
-			["TC"] = 0, -- tick counter
-			["A"] = {},
-			["B"] = {},
-			["C"] = {},
-			["D"] = {},
-			["E"] = {},
-			["F"] = {},
-			["G"] = {},
-			["H"] = {},
-			["I"] = {},
-			["J"] = {},
-			["K"] = {},
-			["L"] = {},
-			["M"] = {},
-			["N"] = {},
-			["O"] = {},
-			["P"] = {},
-			["Q"] = {},
-			["R"] = {},
-			["S"] = {},
-			["T"] = {},
-			["U"] = {},
-			["V"] = {},
-			["W"] = {},
-			["X"] = {}, -- last error
-			["Y"] = {}, -- error message
-			["Z"] = {}
+			["TC"] = 0, -- tick counter, technically "for how long was this computer active"
+			["A"] = 0, -- general purpose registers, 0 init but can be anything
+			["B"] = 0,
+			["C"] = 0,
+			["D"] = 0,
+			["E"] = 0,
+			["F"] = 0,
+			["G"] = 0,
+			["H"] = 0,
+			["I"] = 0,
+			["J"] = 0,
+			["K"] = 0,
+			["L"] = 0,
+			["M"] = 0,
+			["N"] = 0,
+			["O"] = 0,
+			["P"] = 0,
+			["Q"] = 0,
+			["R"] = 0,
+			["S"] = 0,
+			["T"] = 0,
+			["U"] = 0,
+			["V"] = 0,
+			["W"] = 0,
+			["X"] = 0, -- last error
+			["Y"] = 0, -- error message
+			["Z"] = 0 -- err categ
 		},
 		Memory = {
 			["RAM"] = {},
@@ -83,20 +85,39 @@ function ENT:init()
 
 end
 
+local function fpin(pin)
+	return tostring(math.Clamp(math.floor(pin or 0), 1, 10))
+end
+
 function ENT:getInput(pin) -- we check pin validity in the API or before this is called
-	return self.Architecture.IO.Input["Pin"..pin]
+	return self.Architecture.IO.Input["Pin"..fpin(pin)]
 end
 
 function ENT:setInput(pin, value)
-	self.Architecture.IO.Input["Pin"..pin] = value
+	value = value or false
+	self.Architecture.IO.Input["Pin"..fpin(pin)] = value
 end
 
 function ENT:getOutput(pin)
-	return self.Architecture.IO.Output["Pin"..pin]
+	return self.Architecture.IO.Output["Pin"..fpin(pin)]
 end
 
 function ENT:setOutput(pin, value)
-	self.Architecture.IO.Output["Pin"..pin] = value
+	self.Architecture.IO.Output["Pin"..fpin(pin)] = value or false
+end
+
+function ENT:write(register, value)
+	register = string.upper(register)
+	if not self.Architecture.Registers[register] then return end
+	self.Architecture.Registers[register] = value or false
+end
+
+function ENT:read(register)
+	return self.Architecture.Registers[string.upper(register)] or 0
+end
+
+function ENT:incTC()
+	self:write("TC", self:read("TC") + 1)
 end
 
 
@@ -116,6 +137,9 @@ function ENT:onUse(ply)
 end
 
 function ENT:endUse()
+	if self:GetUser():IsValid() then
+		MCom.Message(self:GetUser(), "You have stopped using the computer")
+	end
 	self.isInUse = false
 	self:SetUser(nil)
 end
@@ -135,6 +159,10 @@ end
 function ENT:executeCommand(user, cmd)
 	print(user,"Executed command",cmd)
 	MCom.Interpreter.executeCommand(user, self, cmd)
+	local lastErr = MCom.getLastError()
+	self:write("X", lastErr.errorCode)
+	self:write("Y", lastErr.errorMessage)
+	self:write("Z", lastErr.category)
 
 	hook.Run("OnCommandExecuted", user, self, cmd)
 end
@@ -149,4 +177,8 @@ end
 
 function ENT:scanCallback(ply)
 	MCom.Message(ply, self.serial .. " Tick")
+end
+
+function ENT:tick()
+	self:incTC() -- increment tick counter
 end

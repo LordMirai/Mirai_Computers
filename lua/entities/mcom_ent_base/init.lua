@@ -15,7 +15,7 @@ function ENT:Initialize()
     self.MComEntity = true
 	self.useCooldown = 0.5
 	
-	self.scanTime = 1 -- time between scans
+	self.scanTime = 1 -- time between scans (also referred to as tick period). tick rate = 1 / scanTime
 	self.shouldScan = false -- set to true to start scanning
 	self.scanRange = 300
 
@@ -33,7 +33,7 @@ function ENT:Initialize()
 		[""] = true
 	}
 
-	self.serial = "COMP-0000000000" -- only placeholders. use generateSerial() to generate a serial
+	self.serial = "ENT-0000000000" -- only placeholders. use generateSerial() to generate a serial
 	self.mac = "XX-XX-XX-XX-XX-XX" -- use generateMAC() to generate a MAC address
 
 	
@@ -122,6 +122,7 @@ function ENT:startScan() -- tick
 end
 
 function ENT:scan() -- get all valid ents and call scanCallback on them
+	self:tick()
 	local ents = ents.FindInSphere(self:GetPos(), self.scanRange)
 	for k, ent in pairs(ents) do
 		if ent.MComEntity and ent ~= self then
@@ -130,7 +131,10 @@ function ENT:scan() -- get all valid ents and call scanCallback on them
 			self:scanCallback(ent)
 		end
 	end
+end
 
+function ENT:tick()
+	-- global tick
 end
 
 function ENT:scanCallback(ent)

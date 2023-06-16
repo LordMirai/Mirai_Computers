@@ -1,6 +1,7 @@
 MCom = MCom or {}
 MCom.Commands = MCom.Commands or {}
 MCom.Groups = MCom.Groups or {}
+MCom.Systems = MCom.Systems or {} -- temporary, to be used by mcom_commands
 
 local function pair(grp, cmdTable, nameFB)
     if not MCom.Groups[grp] then
@@ -47,3 +48,30 @@ end)
     All of these are defined in the command table, and are passed to the command when it is run.
     Normally, the origin should NEVER be nil, as commands should only matter to it.
 ]]
+
+MCom.Systems["os"] = {
+    groupAction = {
+        desc = "Operating System commands",
+        action = MCom.Callbacks["os"],
+        category = "system"
+    },
+    commands = {
+        ["shutdown"] = {
+            name = "Shut down",
+            desc = "Powers off the system",
+            action = MCom.Callbacks["os_shutdown"],
+            example = "os shutdown",
+            category = "system",
+            postconditions = MCom.Callbacks["os_shutdown_post"]
+        },
+        ["restart"] = {
+            name = "Restart",
+            desc = "Powers off then back on",
+            action = MCom.Callbacks["os_restart"],
+            example = "os restart",
+            category = "system",
+            postconditions = MCom.Callbacks["os_restart_post"]
+        }
+    }
+}
+

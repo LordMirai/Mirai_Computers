@@ -18,7 +18,7 @@ function MCom.ExecutionResult.new(message, errorCode, category, suggestions)
     self.category = category -- i.e. "Argument"
     self.suggestions = suggestions -- i.e. "Use help command to get more information."
 
-    MCom.lastError = self.errorCode
+    MCom.lastError = self
     return self
 end
 

@@ -1,7 +1,6 @@
 MCom = MCom or {}
 MCom.Commands = MCom.Commands or {}
-
-MCom.prefix = "?" -- chat commands. Might not be used in the future
+MCom.Systems = MCom.Systems or {}
 
 -- ! Todo: We need a way to link commands to caller, maybe through entity. Think about wrappers.
 
@@ -33,13 +32,12 @@ MCom.Commands["command"] = {
 
 
 -- ^ custom commands with this command
-
 MCom.registerCommand("command", cmdTable)
 
 ]]
 
 MCom.Commands.builtinCommands = {-- commands that are builtin and are 'secure'. DO NOT ADD COMMANDS TO THIS LIST
-    ["help"] = true
+    ["help"] = true, -- add the rest
 }
 
 
@@ -66,3 +64,34 @@ function MCom.registerCommand(name, tbl) -- call these at the first possible mom
 end
 
 
+MCom.Commands["reg"] = {
+    name = "Register view",
+    alias = {"register", "reg"},
+    desc = "Lists all registers with their values",
+    action = MCom.Callbacks["register"]
+}
+
+-- the way to set up group actions is to just assign MCom.Groups["groupname"].action to the command data table.
+
+for grpName,cmds in pairs(MCom.Systems) do
+    if cmds.groupAction then
+        MCom.Commands[grpName] = {
+            name = grpName,
+            alias = cmds.alias,
+            desc = cmds.desc,
+            action = cmds.groupAction,
+            admin = cmds.admin,
+            hidden = cmds.hidden,
+            help = cmds.help,
+            example = cmds.example,
+            ignoreCase = cmds.ignoreCase,
+            group = "none",
+            category = cmds.category
+        }
+    end
+
+    for key, cmd in cmds.commands do
+        cmd.group = grpName
+        MCom.registerCommand(key, cmd)
+    end
+end
