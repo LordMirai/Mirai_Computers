@@ -153,7 +153,7 @@ function ENT:OnRemove()
 end
 
 function ENT:info()
-	return string.format("Computer serial: %s; MAC: %s",self.serial,self.mac)
+	return string.format("Computer serial: %s; MAC: %s", self.serial, self.mac)
 end
 
 function ENT:executeCommand(user, cmd)

@@ -75,3 +75,62 @@ MCom.Systems["os"] = {
     }
 }
 
+MCom.Systems["sys"] = {
+    groupAction = {
+        desc = "System commands",
+        action = MCom.Callbacks["sys"],
+        category = "system"
+    },
+    commands = {
+        ["info"] = {
+            name = "Info",
+            desc = "Displays information about the system",
+            action = MCom.Callbacks["sys_info"],
+            example = "sys info",
+            category = "system"
+        },
+        ["diag"] = {
+            name = "Diagnostics",
+            desc = "Runs a diagnostic test on the system",
+            action = MCom.Callbacks["sys_diag"],
+            example = "sys diag",
+            category = "system"
+        },
+        ["lasterror"] = {
+            name = "Last Error",
+            desc = "Displays the last error that occurred",
+            action = MCom.Callbacks["sys_lasterror"],
+            example = "sys lasterror",
+            category = "system"
+        }
+    }
+}
+
+MCom.Systems["net"] = {
+    groupAction = {
+        desc = "Networking commands",
+        action = MCom.Callbacks["net"],
+        category = "network"
+    },
+    commands = {
+        ["ping"] = {
+            name = "Ping",
+            desc = "Pings a remote system",
+            action = MCom.Callbacks["net_ping"],
+            example = "net ping 10.230.12.11",
+            category = "network"
+        },
+        ["connect"] = {
+            name = "Connect",
+            desc = "Connects to a remote system",
+            action = MCom.Callbacks["net_connect"],
+            example = "net connect (address)"
+        },
+        ["disconnect"] = {
+            name = "Disconnect",
+            desc = "Disconnects from a remote system",
+            action = MCom.Callbacks["net_disconnect"],
+            example = "net disconnect (address)"
+        }
+    }
+}

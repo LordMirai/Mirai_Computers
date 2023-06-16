@@ -14,7 +14,7 @@ function MCom.Callbacks["register"](ply, origin, regIn)
     if regIn != "" then
         local reg = registers[regIn]
         if not reg then 
-            msg = "Register " .. regIn .. " does not exist.\n"
+            msg = string.format("Register %s does not exist.\n", regIn)
         else
             msg = string.format("%s%s: %s\n", msg, regIn, reg.Value)
         end
