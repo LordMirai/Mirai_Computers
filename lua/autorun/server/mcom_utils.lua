@@ -4,21 +4,25 @@ MCom.net = MCom.net or {}
 local plyMeta = FindMetaTable("Player")
 
 function MCom.canUse(ply, ent)
+    ply.MComNoUse = ply.MComNoUse or {}
     if not ent.MComEntity then return false end
 
-    return ply.MComNoUse[ent:GetClass()] != nil
+    return ply.MComNoUse[ent:GetClass()] == nil
 end
 
 function MCom.entUseCooldown(ply, ent)
     ply.MComNoUse = ply.MComNoUse or {}
     if not ply.MComNoUse[ent:GetClass()] then
+        print("cooldown for "..ent:GetClass())
         ply.MComNoUse[ent:GetClass()] = true -- register no use
 
+        local time = math.Clamp(ent.useCooldown or 1, 0.1, 600)
         timer.Simple(ent.useCooldown, function()
             if not IsValid(ply) then return end
             if not IsValid(ent) then return end
 
             ply.MComNoUse[ent:GetClass()] = nil -- unregister no use
+            print("cooldown over for "..ent:GetClass())
         end)
     end
 end
@@ -27,7 +31,7 @@ function MCom.Message(ply, msg, col, full)
     col = col or MCom.Colors.White
     msg = string.Trim(msg)
     full = full or false
-    if not IsPlayer(ply) or not ply:IsValid() then
+    if not ply:IsPlayer() or not ply:IsValid() then
         return
     end
     MCom.net.sendMessage(ply, msg, col, full)

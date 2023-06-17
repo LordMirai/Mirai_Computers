@@ -64,7 +64,11 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
     cmd = string.lower(cmd)
     local cmdData = MCom.Commands[cmd] -- get the command data, first seeks standalone
     local group = MCom.Groups[cmd]
-    if IsValid(group) then -- group exists, cmd not standalone
+    PrintTable(cmdData)
+    
+    print("cmd data 00")
+    if group then -- group exists, cmd not standalone
+        print("IT IS A GROUP\n")
         cmdData = group.action and group or group[cmd] -- if the group has its own action, use that, otherwise use the command
     end
 
@@ -74,6 +78,9 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
         MCom.Error(ply, msg)
         return MCom.stdErr("Command does not exist.")
     end
+
+    PrintTable(cmdData)
+    print("end cmd data")
 
     if not cmdData.name then cmdData.name = cmd end -- fallback in case the command doesn't have a pretty name
     if not cmdData.action then -- if the command doesn't have an action
@@ -97,6 +104,8 @@ end
 
 function MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap the function
     -- only preconditions are required to pass, if they exist
+
+    PrintTable(cmdData)
 
     if cmdData.admin then
         if not ply:IsAdmin() then

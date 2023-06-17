@@ -90,7 +90,7 @@ for grpName,cmds in pairs(MCom.Systems) do
         }
     end
 
-    for key, cmd in cmds.commands do
+    for key, cmd in pairs(cmds.commands) do
         cmd.group = grpName
         MCom.registerCommand(key, cmd)
     end

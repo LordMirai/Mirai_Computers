@@ -10,20 +10,22 @@ end
 function ENT:tempMenu()
 
 	local frame = vgui.Create("DFrame")
-	frame:SetSize(500, 1000)
+	frame:SetSize(400, 70)
 	frame:Center()
 	frame:SetTitle("[MCom] Computer Terminal - WIP")
 	frame:MakePopup()
 
 	local text = vgui.Create("DTextEntry", frame)
-	text:SetSize(400, 30)
-	text:SetPos(50, 50)
+	text:SetSize(350, 30)
+	text:SetPos(25, 30)
 	text:SetPlaceholderText("Enter command here")
 
-	function text:OnEnter()
-		local cmd = self:GetValue()
+	text.OnEnter = function()
+		local cmd = text:GetValue()
 		cmd = string.Trim(cmd)
 		MCom.net.terminalCommand(LocalPlayer(),self,cmd)
+		text:SetText("")
+		text:RequestFocus()
 	end
 
 	function frame:OnClose()

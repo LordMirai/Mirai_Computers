@@ -5,7 +5,7 @@ MCom.Callbacks = MCom.Callbacks or {}
 
 -- command callbacks, including precondition and postcondition
 
-function MCom.Callbacks["register"](ply, origin, regIn)
+MCom.Callbacks["register"] = function(ply, origin, regIn)
     regIn = regIn or ""
     if not IsValid(origin) then return end
 
@@ -29,18 +29,19 @@ end
 
 
 -- ^ OS
-function MCom.Callbacks["os"](ply, origin)
+MCom.Callbacks["os"] = function(ply, origin)
     -- print available OS commands (shutdown, restart, etc)
+    print("os callback")
 end
 
-function MCom.Callbacks["os_shutdown"](ply, origin)
+MCom.Callbacks["os_shutdown"] = function(ply, origin)
     origin:output("Shutting down...")
     origin:wait(1, function(origin) -- this effectively waits for one tick then proceeds to execute the rest
         origin:shutdown()
     end, origin)
 end
 
-function MCom.Callbacks["os_restart"](ply, origin)
+MCom.Callbacks["os_restart"] = function(ply, origin)
     origin:output("Restarting...")
     origin:wait(1, function(origin)
         origin:shutdown()

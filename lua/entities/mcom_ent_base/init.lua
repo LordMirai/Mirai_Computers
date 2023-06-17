@@ -14,6 +14,7 @@ function ENT:Initialize()
 
     self.MComEntity = true
 	self.useCooldown = 0.5
+	self.canUse = true
 	
 	self.scanTime = 1 -- time between scans (also referred to as tick period). tick rate = 1 / scanTime
 	self.shouldScan = false -- set to true to start scanning
@@ -53,7 +54,7 @@ function ENT:Use(ply)
 
 	self:onUse(ply)
 
-	MCom.entUseCooldown(ply, ent)
+	MCom.entUseCooldown(ply, self)
 end
 
 function ENT:onUse(ply)

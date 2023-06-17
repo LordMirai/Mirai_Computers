@@ -23,9 +23,13 @@ function MCom.net.terminalCommand(ply, origin, cmd)
         ply = Entity(0) -- default to worldspawn
         return
     end
+    if not origin:IsValid() then
+        origin = Entity(0)
+    end
+
     net.Start("MCom_ExecuteCommand")
     net.WriteEntity(ply)
-    net.WriteEntity(self)
+    net.WriteEntity(origin)
     net.WriteString(cmd)
     net.SendToServer()
 end
@@ -57,4 +61,9 @@ end)
 
 net.Receive("MCom_AdminMenu", function()
     MCom.openAdminMenu()
+end)
+
+net.Receive("MCom_ComputerMenu", function()
+    local ent = net.ReadEntity()
+    ent:tempMenu()
 end)

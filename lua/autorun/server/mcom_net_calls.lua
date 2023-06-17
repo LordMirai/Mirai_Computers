@@ -26,7 +26,12 @@ function MCom.net.openMenu(ply)
     net.Send(ply)
 end
 
-
+function MCom.net.computerMenu(ply, ent)
+    print("sending SV")
+    net.Start("MCom_ComputerMenu")
+    net.WriteEntity(ent)
+    net.Send(ply)
+end
 
 
 
@@ -50,6 +55,8 @@ net.Receive("MCom_ExecuteCommand", function(len, ply)
     local issuer = net.ReadEntity()
     local origin = net.ReadEntity()
     local cmd = net.ReadString()
+
+    print(issuer, origin, cmd)
 
     if not IsValid(issuer) or not IsValid(origin) then return end
     origin:executeCommand(issuer, cmd)

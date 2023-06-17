@@ -1,5 +1,6 @@
 MCom = MCom or {}
 MCom.Commands = MCom.Commands or {}
+MCom.Callbacks = MCom.Callbacks or {}
 MCom.Groups = MCom.Groups or {}
 MCom.Systems = MCom.Systems or {} -- temporary, to be used by mcom_commands
 
@@ -7,10 +8,13 @@ local function pair(grp, cmdTable, nameFB)
     if not MCom.Groups[grp] then
         MCom.Groups[grp] = {}
     end
+    print("Pairing "..nameFB.." to "..grp)
     MCom.Groups[grp][cmdTable.name or nameFB] = cmdTable
 end
 
 hook.Add("InitPostEntity", "MCom_PairCommandsToGroups", function()
+    print("Pairing start")
+    PrintTable(MCom.Commands)
     for k,v in pairs(MCom.Commands) do
         if IsValid(v.action) then -- we know it's a valid command
             local g = string.lower(v.group or "")

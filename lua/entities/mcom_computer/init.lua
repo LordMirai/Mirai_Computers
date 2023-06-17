@@ -128,12 +128,14 @@ function ENT:onUse(ply)
 	if not self:GetUser():IsValid() then
 		self:endUse() -- if the user is not valid, then the computer is not in use
 	end
-	if self.isInUse then
+	if self.isInUse and ply != self:GetUser() then
 		MCom.Message(ply, "This computer is already in use by "..self:GetUser():Nick())
 		return
 	end
 	self.isInUse = true
 	self:SetUser(ply)
+
+	MCom.net.computerMenu(ply, self)
 end
 
 function ENT:endUse()
