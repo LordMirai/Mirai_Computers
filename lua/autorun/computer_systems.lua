@@ -12,6 +12,20 @@ MCom.Systems = MCom.Systems or {} -- temporary, to be used by mcom_commands
     MCom.Groups[grp][cmdTable.name or nameFB] = cmdTable
 end]]
 
+function MCom.refreshCommands()
+    for k,v in pairs(MCom.Systems) do -- check command actions
+        if not v.groupAction then
+            v.groupAction = MCom.Callbacks[k]
+        end
+
+        for _, cmd in pairs(v.commands or {}) do
+            if not cmd.action then
+                cmd.action = MCom.Callbacks[cmd.fallback] -- try to use the fallback. it *MIGHT* error if missing, but that's fixable
+            end
+        end
+    end
+end
+
 hook.Add("InitPostEntity", "MCom_PairCommandsToGroups", function()
     --[[print("Pairing start")
     PrintTable(MCom.Commands)
@@ -25,18 +39,7 @@ hook.Add("InitPostEntity", "MCom_PairCommandsToGroups", function()
     end]]
 
     timer.Simple(1, function() -- we wait a bit, for any other command initialization to finish
-        for k,v in pairs(MCom.Systems) do -- check command actions
-                if not v.groupAction then
-                    v.groupAction = MCom.Callbacks[k]
-                end
-
-                for _, cmd in pairs(v.commands or {}) do
-                    if not cmd.action then
-                        cmd.action = MCom.Callbacks[cmd.fallback] -- try to use the fallback. it *MIGHT* error if missing, but that's fixable
-                    end
-                end
-            end
-        end
+        MCom.refreshCommands()
     end)
 end)
 
@@ -216,13 +219,8 @@ MCom.Systems["io"] = {
     }
 }
 
-MCom.Systems["other"] = { -- * will need a fallback implementation to recognize
-    groupAction = {
-        desc = "Miscellaneous commands, not related to any group",
-        action = MCom.Callbacks["other"],
-        category = "other",
-        fallback = "other"
-    },
+MCom.Systems["none"] = { -- * will need a fallback implementation to recognize
+    -- no group action
     commands = {
         ["reg"] = {
             name = "Register view",

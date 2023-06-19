@@ -114,7 +114,7 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
         for i in 1, #cmdData.arguments do -- for each argument (we use this so we can overwrite the arguments table)
             local argEntry = cmdData.arguments[i]
             local arg = arguments[i] or nil
-            if argEntry.optional = false and not arg then
+            if argEntry.optional == false and not arg then
                 local msg = string.format("Error at argument %d - Argument '%s' missing. Type: %s", i, argEntry.name, argEntry.type or "any")
                 return MCom.stdErr(msg)
             end
@@ -139,7 +139,7 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
     end
 
     local wrappedFunction = MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap the function
-    return wrappedFunction() -- finally execute the function
+    return wrappedFunction -- finally execute the function
 end
 
 

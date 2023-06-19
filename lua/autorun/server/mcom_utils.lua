@@ -96,6 +96,15 @@ hook.Add("PlayerSay", "MCom_Chat_Commands", function(ply, txt, team)
         if cmd == "menu" then
             MCom.openMenu(ply)
         end
+
+        if cmd == "refresh" then
+            if not ply:IsAdmin() then
+                MCom.Error(ply, "You must be an admin to use this command.")
+                return ""
+            end
+            MCom.refreshCommands()
+            MCom.Message(ply, "Commands refreshed.")
+        end
         
         
         return "" -- comment this out to allow chat commands to be sent to chat

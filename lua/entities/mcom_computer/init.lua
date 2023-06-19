@@ -173,7 +173,7 @@ function ENT:output(msg)
 	-- for now, we'll print this to user's chat. We will later add a screen entity or other monitor/display system
 
 	if self:GetUser():IsValid() then
-		MCom.Message(self:GetUser(), string.format("Computer output: %s", self.serial, msg))
+		MCom.Message(self:GetUser(), string.format("Computer output: %s", msg))
 	end
 end
 

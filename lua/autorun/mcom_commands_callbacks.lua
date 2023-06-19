@@ -32,6 +32,7 @@ end
 MCom.Callbacks["os"] = function(ply, origin)
     -- print available OS commands (shutdown, restart, etc)
     print("os callback")
+    origin:output("Available OS commands:\n")
 end
 
 MCom.Callbacks["os_shutdown"] = function(ply, origin)
