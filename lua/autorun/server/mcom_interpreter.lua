@@ -16,14 +16,26 @@ function MCom.Interpreter.error(msg)
     MCom.tellAdmins("Interpreter error received! Check console.", MCom.Colors.Red)
 end
 
+local function matchesType(inp, typeCheck)
+    typeCheck = string.lower(typeCheck) or "any"
+    if typeCheck == "any" then return true end
+    if typeCheck == "string" then
+        return tonumber(inp) == nil
+    elseif typeCheck == "number" then
+        return tostring(tonumber(inp)) == inp
+    elseif typeCheck == "sid" or typeCheck == "steamid" then
+        return string.StartsWith(string.lower(inp),"steam:")
+    end
+    return false -- something's broken
+end
 
 function MCom.Interpreter.extractArgs(strIn, ignoreFirst, returnSeparate, ignoreCase)
     ignoreFirst = ignoreFirst or false -- ignore the first argument (the command) if we already have it
     returnSeparate = returnSeparate or false -- return the command and the args separately
     ignoreCase = ignoreCase or false -- ignore case when comparing args (most of the time, we should do this)
-    -- ! It might seem counterintuitive, but we'll save a copy of the arguments, without case, in case the function uses that instead of the original args.
+    -- ! It might seem counterintuitive, but we'll save a copy of the arguments, ignoring case, in case the function uses that instead of the original args.
 
-    while string.find(strIn, "  ") do
+    while string.find(strIn, "  ") do -- while there are double spaces
         strIn = string.Replace(strIn, "  ", " ") -- remove all unnecessary double spaces to clean up args
     end
 
@@ -62,25 +74,25 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
     local cmd, args, argsNoCase = MCom.Interpreter.extractArgs(stringIn, false, true, true) -- extract the command and the args
     
     cmd = string.lower(cmd)
-    local cmdData = MCom.Commands[cmd] -- get the command data, first seeks standalone
-    local group = MCom.Groups[cmd]
-    PrintTable(cmdData)
+    local cmdData = MCom.Systems["none"][cmd] -- get the command data, first seeks standalone ("none" system)
+    local group = MCom.Systems[cmd]
+    -- PrintTable(cmdData)
+
+    local subcommand = argsNoCase[1] or nil
     
-    print("cmd data 00")
+    
     if group then -- group exists, cmd not standalone
-        print("IT IS A GROUP\n")
-        cmdData = group.action and group or group[cmd] -- if the group has its own action, use that, otherwise use the command
+        print("IT IS A SYSTEM INDEED\n")
+        cmdData = subcommand and group[subcommand] or group.groupAction -- if there is an argument, use the subcommand, otherwise use the group action
     end
 
     if not cmdData then -- the command doesn't exist
         local msg = string.format("Command %s does not exist.", cmd)
-        MCom.Interpreter.warning(msg)
+        -- MCom.Interpreter.warning(msg)
         MCom.Error(ply, msg)
-        return MCom.stdErr("Command does not exist.")
+        return MCom.stdErr(msg)
     end
 
-    PrintTable(cmdData)
-    print("end cmd data")
 
     if not cmdData.name then cmdData.name = cmd end -- fallback in case the command doesn't have a pretty name
     if not cmdData.action then -- if the command doesn't have an action
@@ -96,6 +108,35 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
     end
 
     local arguments = cmdData.ignoreCase and argsNoCase or args -- use the correct arguments, from command table
+
+    -- ! check argument validity
+    if cmdData.arguments then -- arg validation active
+        for i in 1, #cmdData.arguments do -- for each argument (we use this so we can overwrite the arguments table)
+            local argEntry = cmdData.arguments[i]
+            local arg = arguments[i] or nil
+            if argEntry.optional = false and not arg then
+                local msg = string.format("Error at argument %d - Argument '%s' missing. Type: %s", i, argEntry.name, argEntry.type or "any")
+                return MCom.stdErr(msg)
+            end
+
+            if not matchesType(arg, argEntry.type) then
+                local msg = string.format("Error at argument %d - Type discrepancy - Expected: %s", i, argEntry.type)
+                return MCom.stdErr(msg)
+            end
+
+            if not arg then -- if the given argument is missing
+                if argEntry.default then
+                    if argEntry.default == "nil" then
+                        arguments[i] = nil -- force nil
+                    else    
+                        arguments[i] = argEntry.default -- use default
+                    end
+                else
+                    arguments[i] = "" -- empty value if no default
+                end
+            end
+        end
+    end
 
     local wrappedFunction = MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap the function
     return wrappedFunction() -- finally execute the function
@@ -124,6 +165,8 @@ function MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap 
 
     local execResult = cmdData.action(ply, origin, arguments) -- execute the command
 
-    local post = cmdData.postconditions and cmdData.postconditions(ply, origin, execResult, arguments) or true
+    if cmdData.postconditions then
+        local post = cmdData.postconditions(ply, origin, execResult, arguments) -- postconditions, shouldn't be used much
+    end
     return MCom.success(cmdData.name)
 end

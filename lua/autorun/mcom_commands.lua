@@ -27,7 +27,30 @@ MCom.Commands["command"] = {
     help = "help text",
     example = "example text",
     group = "none", -- Think about os and sys. if empty or nil, they're considered root. I got no clue how i'll do this tho
-    category = "general" -- things like 'general', 'management', 'misc' etc
+    category = "general", -- things like 'general', 'management', 'misc' etc
+    arguments = { -- ^ optional, but recommended for validation and help
+        {
+            name = "arg1",
+            type = "string", -- hard to use strings of multiple words, but we use: string, number, bool, any`
+            optional = false,
+            desc = "description"
+            -- value is required so no default.
+        },
+        {
+            name = "arg2",
+            type = "number",
+            optional = true,
+            default = 0,
+            desc = "description"
+        },
+        {
+            name = "arg3",
+            type = "player",
+            optional = true,
+            default = nil,
+            desc = "description"
+        },
+    }
 }
 
 
@@ -64,14 +87,12 @@ function MCom.registerCommand(name, tbl) -- call these at the first possible mom
 end
 
 
-MCom.Commands["reg"] = {
-    name = "Register view",
-    alias = {"register", "reg"},
-    desc = "Lists all registers with their values",
-    action = MCom.Callbacks["register"]
-}
+
 
 -- the way to set up group actions is to just assign MCom.Groups["groupname"].action to the command data table.
+
+--[[ 
+! removed since broken
 
 for grpName,cmds in pairs(MCom.Systems) do
     if cmds.groupAction then
@@ -95,3 +116,4 @@ for grpName,cmds in pairs(MCom.Systems) do
         MCom.registerCommand(key, cmd)
     end
 end
+]]
