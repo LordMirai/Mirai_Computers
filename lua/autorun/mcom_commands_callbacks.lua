@@ -85,3 +85,25 @@ end
 MCom.Callbacks["tick"] = function(ply, origin, count)
     tickerFunc(origin,count)
 end
+
+MCom.Callbacks["io_write"] = function(ply, origin, pin, val)
+    local out = (val == "true" or val == "1") and true or false
+    -- origin:output("Writing " .. tostring(out) .. " to pin " .. pin)
+    local msg = string.format("Writing %s to pin %s", tostring(out), pin)
+    origin:output(msg)
+    origin:setOutput(pin, out)
+end
+
+local function clock(origin, pin, interval)
+    if not IsValid(origin) then return end
+    origin:togglePin(pin)
+    timer.Simple(interval, function()
+        clock(origin, pin, interval)
+    end)
+end
+
+MCom.Callbacks["clock"] = function(ply, origin, pin, interval)
+    interval = tonumber(interval) or 1
+    origin:output(string.format("Starting clock on pin %s with interval %s", pin, interval))
+    clock(origin, pin, interval)    
+end

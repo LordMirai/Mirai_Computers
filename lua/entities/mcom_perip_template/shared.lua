@@ -1,13 +1,13 @@
 ENT.Type = "anim"
-ENT.Base = "mcom_ent_base" -- test if this works
+ENT.Base = "mcom_peripheral_base" -- test if this works
 
-ENT.PrintName = "Peripheral"
+ENT.PrintName = "Peripheral Template"
 
-ENT.Spawnable = false
+ENT.Spawnable = true -- set this to false in template
 ENT.AdminOnly = true
 
 ENT.Author = "Lord Mirai　(未来)"
-ENT.Purpose = "A peripheral base"
+ENT.Purpose = "A peripheral template"
 ENT.Instructions = "Wire up and use"
 
 

@@ -86,7 +86,7 @@ hook.Add("PlayerSay", "MCom_Chat_Commands", function(ply, txt, team)
     -- ! do NOT flood this with chat commands, we should only have a few. MBank had 6 in mind and I ended up with 20. It's a mess.
     local cmd, args = MCom.Interpreter.extractArgs(txt, false, true)
 
-    if (cmd[1] or "") == "?" then -- probably MCom command
+    if (cmd[1] or "") == MCom.prefix then -- probably MCom command
         cmd = string.sub(cmd, 2)
         if cmd == "help" then
             MCom.Message(ply, "MCom Chat Commands:", MCom.Colors.White, true)

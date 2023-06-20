@@ -48,3 +48,25 @@ MCom.Execution.Fail = 2 -- ! executed but failed
 MCom.Execution.Error = 3 -- ! errored
 MCom.Execution.Unknown = 4 -- ? unknown error
 MCom.Execution.Unauthorized = 5 -- ! unauthorized (admin only or something)
+
+MCom.ColorStrings = {
+    ["red"] = MCom.Colors.Red,
+    ["green"] = MCom.Colors.Green,
+    ["blue"] = MCom.Colors.Blue,
+    ["yellow"] = MCom.Colors.Yellow,
+    ["purple"] = MCom.Colors.Purple,
+    ["orange"] = MCom.Colors.Orange,
+    ["white"] = MCom.Colors.White,
+    ["black"] = MCom.Colors.Black,
+    ["indigo"] = MCom.Colors.Indigo,
+    ["red_dark"] = MCom.Colors.RedDark,
+    ["red_light"] = MCom.Colors.RedLight,
+    ["green_dark"] = MCom.Colors.GreenDark,
+    ["green_light"] = MCom.Colors.GreenLight,
+    ["blue_dark"] = MCom.Colors.BlueDark,
+    ["blue_light"] = MCom.Colors.BlueLight,
+    ["orange_dark"] = MCom.Colors.OrangeDark,
+    ["orange_light"] = MCom.Colors.OrangeLight,
+    ["purple_dark"] = MCom.Colors.PurpleDark,
+    ["purple_light"] = MCom.Colors.PurpleLight,
+}

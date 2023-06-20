@@ -18,13 +18,16 @@ end
 
 local function matchesType(inp, typeCheck)
     typeCheck = string.lower(typeCheck) or "any"
-    if typeCheck == "any" then return true end
+    inp = string.Trim(tostring(inp)) or ""
+    if typeCheck == "any" then return tostring(inp) != "" end
     if typeCheck == "string" then
         return tonumber(inp) == nil
     elseif typeCheck == "number" then
         return tostring(tonumber(inp)) == inp
     elseif typeCheck == "sid" or typeCheck == "steamid" then
         return string.StartsWith(string.lower(inp),"steam:")
+    elseif typeCheck == "color" then -- second arg is the real color, if exists
+        return (MCom.ColorStrings[string.lower(typeCheck)] != nil), (MCom.ColorStrings[string.lower(typeCheck)] or nil)
     end
     return false -- something's broken
 end
@@ -121,9 +124,15 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
                 return MCom.stdErr(msg)
             end
 
-            if not matchesType(arg, argEntry.type) then
+            local matches, returned = matchesType(arg, argEntry.type)
+
+            if not matches then
                 local msg = string.format("Error at argument %d - Type discrepancy - Expected: %s", i, argEntry.type)
                 return MCom.stdErr(msg)
+            end
+
+            if returned then -- we change the arg (such as turning "red" into MCom.Colors.Red)
+                arguments[i] = returned -- override the given arg
             end
 
             if not arg then -- if the given argument is missing

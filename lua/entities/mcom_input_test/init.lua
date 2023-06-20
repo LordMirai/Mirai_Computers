@@ -7,33 +7,26 @@ include("shared.lua")
 
 function ENT:peripheralInit()
 	local mdl = "" -- model here, some cube
-	self:setup(mdl, "Button", false, "BTN")
-	self.activateCount = 0
+	self:setup(mdl, "Tester", false, "INTEST")
+
+	self:SetColor(MCom.Colors.Black)
 end
 
 function ENT:behavior() -- attach this to onTick or other such thing to implement behavior. You can even put it in peripheralInit() to work independently
 
 end
 
-function ENT:onUse(ply)
-	local ac = not self:GetActive()
-	self:SetActive(ac) -- toggle active state
-	MCom.Message(ply, "Button "..(ac and "activated" or "deactivated").."!")
-	if ac then
-		self.activateCount = self.activateCount + 1
-	end
-end
-
 function self:setupPorts()
 	-- set up the listen ports
 	self:addPort({
-		name = "Write out",
-		read = false,
-		port = 4,
-		registers = {"M"} -- write press count to M
-		callback = function(self, portValue, regM)
-			regM = self.activateCount
-			self:writeRegister("M", regM)
+		name = "Read input",
+		read = true,
+		port = 2,
+		registers = {"K","L"} -- read color from K,L
+		callback = function(self, portValue, regK, regL)
+			local onColor = regK != 0 and regK or MCom.Colors.Green
+			local offColor = regL != 0 and regL or MCom.Colors.Red
+			self:SetColor(portValue and onColor or offColor) -- set the color by port and registers
 		end,
 	})
 end

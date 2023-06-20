@@ -89,7 +89,7 @@ function ENT:onDamaged(source, dmg)
 end
 
 function ENT:generateSerial() -- might be slightly slow, but it's only called once
-	local serial = "COMP-" -- Computer prefix
+	local serial = (self.prefix or "MCOM") .. "-" -- Computer prefix
 	local chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	for i = 1, 10 do
 		serial = serial .. string.char(chars:byte(math.random(1, #chars))) -- random char from chars

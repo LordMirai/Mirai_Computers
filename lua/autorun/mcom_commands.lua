@@ -2,8 +2,7 @@ MCom = MCom or {}
 MCom.Commands = MCom.Commands or {}
 MCom.Systems = MCom.Systems or {}
 
--- ! Todo: We need a way to link commands to caller, maybe through entity. Think about wrappers.
-
+-- ! Module fully moved to computer_systems, lib MCom.Systems
 --[[command structure:
 -- ^ builtin
 
@@ -31,10 +30,10 @@ MCom.Commands["command"] = {
     arguments = { -- ^ optional, but recommended for validation and help
         {
             name = "arg1",
-            type = "string", -- hard to use strings of multiple words, but we use: string, number, bool, any`
+            type = "string", -- string, number, bool, color, any
             optional = false,
             desc = "description"
-            -- value is required so no default.
+            -- if arg is required, no default.
         },
         {
             name = "arg2",
@@ -64,7 +63,7 @@ MCom.Commands.builtinCommands = {-- commands that are builtin and are 'secure'. 
 }
 
 
-function MCom.registerCommand(name, tbl) -- call these at the first possible moment. Do not create dynamically.
+function MCom.registerCommand(name, tbl) -- call these at the first possible moment. Do not create dynamically. -- ! Callback must exist beforehand
     if not name then return end
     name = string.Trim(string.lower(name))
     if name == "" then return end
@@ -83,37 +82,5 @@ function MCom.registerCommand(name, tbl) -- call these at the first possible mom
     tbl.group = tbl.group or "none"
     tbl.category = tbl.category or "general"
 
-    MCom.Commands[name] = tbl -- register to base cmds
+    MCom.Systems[group] = tbl -- register to sys
 end
-
-
-
-
--- the way to set up group actions is to just assign MCom.Groups["groupname"].action to the command data table.
-
---[[ 
-! removed since broken
-
-for grpName,cmds in pairs(MCom.Systems) do
-    if cmds.groupAction then
-        MCom.Commands[grpName] = {
-            name = grpName,
-            alias = cmds.alias,
-            desc = cmds.desc,
-            action = cmds.groupAction,
-            admin = cmds.admin,
-            hidden = cmds.hidden,
-            help = cmds.help,
-            example = cmds.example,
-            ignoreCase = cmds.ignoreCase,
-            group = "none",
-            category = cmds.category
-        }
-    end
-
-    for key, cmd in pairs(cmds.commands) do
-        cmd.group = grpName
-        MCom.registerCommand(key, cmd)
-    end
-end
-]]

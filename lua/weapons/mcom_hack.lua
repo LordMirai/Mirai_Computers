@@ -12,7 +12,7 @@ SWEP.Contact = "lordmiraithegod@gmail.com | Lord Mirai(未来)#0039"
 SWEP.Slot = 0
 SWEP.SlotPos = 20
 SWEP.DrawCrosshair = true
-SWEP.Weight = 501
+SWEP.Weight = 550
 
 SWEP.AutoSwitchTo = true
 SWEP.AutoSwitchFrom = false

@@ -1,14 +1,14 @@
 ENT.Type = "anim"
 ENT.Base = "mcom_peripheral_base" -- test if this works
 
-ENT.PrintName = "Button"
+ENT.PrintName = "Input tester"
 
 ENT.Spawnable = true
 ENT.AdminOnly = true
 
 ENT.Author = "Lord Mirai　(未来)"
-ENT.Purpose = "A button input"
-ENT.Instructions = "Writes the value to a pin"
+ENT.Purpose = "An input tester"
+ENT.Instructions = "Black if not connected, green if true, red if false"
 
 
 function ENT:SetupDataTables()

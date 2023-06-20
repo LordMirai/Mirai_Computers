@@ -232,7 +232,35 @@ MCom.Systems["none"] = { -- * will need a fallback implementation to recognize
             name = "Ticker test",
             action = MCom.Callbacks["tick"],
             example = "tick",
-            fallback = "tick"
+            fallback = "tick",
+            arguments = {
+                {
+                    name = "tickCount",
+                    type = "number",
+                    optional = true,
+                    default = 3
+                }
+            }
+        },
+        ["clock"] = {
+            name = "Clock output",
+            action = MCom.Callbacks["clock"],
+            help = "clock (pin) (interval)",
+            example = "clock 2 1.3 - toggles pin 2 every 1.3 seconds",
+            fallback = "clock",
+            arguments = {
+                {
+                    name = "pin",
+                    type = "number",
+                    optional = false
+                },
+                {
+                    name = "interval",
+                    type = "number",
+                    optional = true,
+                    default = 1
+                }
+            }
         }
     }
 }

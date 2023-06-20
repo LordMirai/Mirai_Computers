@@ -5,9 +5,12 @@ include("shared.lua")
 
 
 function ENT:init()
-	self:SetModel("models/props_office/computer_monitor04.mdl")
+	self:SetModel("models/props_office/computer_monitor04.mdl") -- change to tower instead of monitor
 	self.isComputer = true
+	self.isTerminal = true -- alias for isComputer
 	self.isInUse = false
+
+	self.prefix = "COMP"
 
 	self:generateSerial()
 	self:generateMAC()
@@ -15,10 +18,10 @@ function ENT:init()
 	self:SetState(MCom.ComputerState.OFF)
 
 	self.targetEnts = {
-		["player"] = true
+		-- ["player"] = true
 	}
 
-	self:scanSetup(1, 200, self.targetEnts, true) -- only tick for players, once per second, 200 range
+	self:scanSetup(1, 200, self.targetEnts, false) -- tick for everything
 
 
 	self.Architecture = { -- to hold Registers and Memory
@@ -83,17 +86,39 @@ function ENT:init()
 		}
 	}
 
+	self.Ports = { -- 10 ports for peripherals to use
+		["Port1"] = nil,
+		["Port2"] = nil,
+		["Port3"] = nil,
+		["Port4"] = nil,
+		["Port5"] = nil,
+		["Port6"] = nil,
+		["Port7"] = nil,
+		["Port8"] = nil,
+		["Port9"] = nil,
+		["Port10"] = nil
+	}
+	self.portCount = 10
+
 end
 
 local function fpin(pin)
-	return tostring(math.Clamp(math.floor(pin or 0), 1, 10))
+	return tostring(math.Clamp(math.floor(toumber(pin) or 0), 1, 10))
+end
+
+local function fport(port) -- individual functions in case I want to change the format or count later
+	return tostring(math.Clamp(math.floor(toumber(port) or 0), 1, 10))
+end
+
+local fportstr(pin) -- "format port as string"
+	return "Port"..fport(pin)
 end
 
 function ENT:getInput(pin) -- we check pin validity in the API or before this is called
 	return self.Architecture.IO.Input["Pin"..fpin(pin)]
 end
 
-function ENT:setInput(pin, value)
+function ENT:setInput(pin, value) -- shouldn't be used by the computer itself
 	value = value or false
 	self.Architecture.IO.Input["Pin"..fpin(pin)] = value
 end
@@ -104,6 +129,11 @@ end
 
 function ENT:setOutput(pin, value)
 	self.Architecture.IO.Output["Pin"..fpin(pin)] = value or false
+	hook.Run("ComputerPortChange", self, pin, value) -- hook for peripherals to use
+end
+
+function ENT:toggleOutput(pin)
+	self:setOutput(pin, not self:getOutput(pin))
 end
 
 function ENT:write(register, value)
@@ -163,7 +193,7 @@ function ENT:executeCommand(user, cmd)
 	MCom.Interpreter.executeCommand(user, self, cmd)
 	local lastErr = MCom.getLastError()
 	self:write("X", lastErr.errorCode)
-	self:write("Y", lastErr.errorMessage)
+	self:write("Y", lastErr.errorMessage or "")
 	self:write("Z", lastErr.category)
 
 	hook.Run("OnCommandExecuted", user, self, cmd)
@@ -185,12 +215,64 @@ function ENT:tick()
 	self:incTC() -- increment tick counter
 end
 
+function ENT:selectPort()
+	for i in 1,self.portCount do
+		if not self.Ports[fportstr(i)] then
+			return fportstr(i) -- return the first available port
+		end
+	end
+	return nil -- no ports available
+end
+
 function ENT:wait(ticks, callback, ...)
 	local args = {...}
 	ticks = math.Clamp(math.floor(ticks),0,300)
 	local timeTowait = self.scanTime * ticks
 	
 	timer.Simple(timeTowait, function()
+		if not self:IsValid() then return end -- if the computer is removed, don't execute the callback
 		callback(unpack(args))
 	end)
+end
+
+function ENT:peripheralConnected(perip)
+
+end
+
+function ENT:connectPeripheral(perip, port)
+	if not perip or not perip:IsValid() then return end
+	if not port then port = self:selectPort() end
+	if tostring(tonumber(port)) == port then -- if port is a number, convert it to a string
+		port = fportstr(port)
+	end
+	if not self.Ports[port] then return end
+	if self.Ports[port]:IsValid() then return end
+
+	self.Ports[port] = perip
+	perip:SetParent(self)
+	perip:SetPort(port)
+	self:peripheralConnected(perip)
+end
+
+function ENT:poll() -- check all connected peripherals and disconnect if invalid
+	for i in 1,self.portCount do
+		local port = fportstr(i)
+		if not self.Ports[port] or not self.Ports[port]:IsValid() then
+			self.Ports[port] = nil
+		end
+	end
+end
+
+function ENT:tick() -- ovr computer tick
+	hook.Run("ComputerTick", self)
+end
+
+function ENT:isConnected(ent)
+	for i in 1,self.portCount do
+		local port = fportstr(i)
+		if self.Ports[port] == ent then
+			return true
+		end
+	end
+	return false
 end
