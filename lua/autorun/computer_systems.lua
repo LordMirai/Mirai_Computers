@@ -14,14 +14,12 @@ end]]
 
 function MCom.refreshCommands()
     for k,v in pairs(MCom.Systems) do -- check command actions
-        if not v.groupAction then
-            v.groupAction = MCom.Callbacks[k]
+        if v.groupAction then
+            v.groupAction.action = MCom.Callbacks[k]
         end
 
         for _, cmd in pairs(v.commands or {}) do
-            if not cmd.action then
-                cmd.action = MCom.Callbacks[cmd.fallback] -- try to use the fallback. it *MIGHT* error if missing, but that's fixable
-            end
+            cmd.action = MCom.Callbacks[cmd.fallback] -- try to use the fallback. it *MIGHT* error if missing, but that's fixable
         end
     end
 end
@@ -228,6 +226,13 @@ MCom.Systems["none"] = { -- * will need a fallback implementation to recognize
             desc = "Lists all registers with their values",
             action = MCom.Callbacks["register"],
             example = "reg",
+            fallback = "register"
+        },
+        ["tick"] = {
+            name = "Ticker test",
+            action = MCom.Callbacks["tick"],
+            example = "tick",
+            fallback = "tick"
         }
     }
 }

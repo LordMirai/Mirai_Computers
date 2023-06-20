@@ -16,11 +16,11 @@ MCom.Callbacks["register"] = function(ply, origin, regIn)
         if not reg then 
             msg = string.format("Register %s does not exist.\n", regIn)
         else
-            msg = string.format("%s%s: %s\n", msg, regIn, reg.Value)
+            msg = string.format("%s%s: %s\n", msg, regIn, reg)
         end
     else
         for k, v in pairs(registers) do
-            msg = string.format("%s%s: %s\n", msg, k, v.Value)
+            msg = string.format("%s%s: %s\n", msg, k, v)
         end
     end
 
@@ -70,3 +70,18 @@ end
     end
 
 ]]
+
+local function tickerFunc(origin, count)
+    -- print(count)
+    count = tonumber(count) or 3
+    origin:output("Tick - " .. count)
+    origin:wait(1, function(origin)
+        if count > 1 then
+            tickerFunc(origin, count - 1)
+        end
+    end, origin)
+end
+
+MCom.Callbacks["tick"] = function(ply, origin, count)
+    tickerFunc(origin,count)
+end

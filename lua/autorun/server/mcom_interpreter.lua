@@ -74,16 +74,17 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
     local cmd, args, argsNoCase = MCom.Interpreter.extractArgs(stringIn, false, true, true) -- extract the command and the args
     
     cmd = string.lower(cmd)
-    local cmdData = MCom.Systems["none"][cmd] -- get the command data, first seeks standalone ("none" system)
+    local cmdData = MCom.Systems["none"].commands[cmd] -- get the command data, first seeks standalone ("none" system)
     local group = MCom.Systems[cmd]
     -- PrintTable(cmdData)
 
-    local subcommand = argsNoCase[1] or nil
-    
+    local subcommand = argsNoCase[2] or nil
     
     if group then -- group exists, cmd not standalone
         print("IT IS A SYSTEM INDEED\n")
-        cmdData = subcommand and group[subcommand] or group.groupAction -- if there is an argument, use the subcommand, otherwise use the group action
+        print(group.groupAction)
+        cmdData = subcommand and group.commands[subcommand] or group.groupAction -- if there is an argument, use the subcommand, otherwise use the group action
+        print(cmdData)
     end
 
     if not cmdData then -- the command doesn't exist
@@ -93,6 +94,7 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
         return MCom.stdErr(msg)
     end
 
+    -- PrintTable(cmdData)
 
     if not cmdData.name then cmdData.name = cmd end -- fallback in case the command doesn't have a pretty name
     if not cmdData.action then -- if the command doesn't have an action
@@ -146,7 +148,7 @@ end
 function MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap the function
     -- only preconditions are required to pass, if they exist
 
-    PrintTable(cmdData)
+    -- PrintTable(cmdData)
 
     if cmdData.admin then
         if not ply:IsAdmin() then
@@ -157,16 +159,16 @@ function MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap 
 
     local precond = true
     if cmdData.preconditions then
-        precond = cmdData.preconditions(ply, origin, arguments)
+        precond = cmdData.preconditions(ply, origin, unpack(arguments))
     end
     if not precond then
         return MCom.stdErr("Preconditions failed.", "Execution")
     end
 
-    local execResult = cmdData.action(ply, origin, arguments) -- execute the command
+    local execResult = cmdData.action(ply, origin, unpack(arguments)) -- execute the command
 
     if cmdData.postconditions then
-        local post = cmdData.postconditions(ply, origin, execResult, arguments) -- postconditions, shouldn't be used much
+        local post = cmdData.postconditions(ply, origin, execResult, unpack(arguments)) -- postconditions, shouldn't be used much
     end
     return MCom.success(cmdData.name)
 end
