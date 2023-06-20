@@ -5,6 +5,7 @@ ENT.PrintName = "Button"
 
 ENT.Spawnable = true
 ENT.AdminOnly = true
+ENT.Category = "Mirai Computer System"
 
 ENT.Author = "Lord Mirai　(未来)"
 ENT.Purpose = "A button input"

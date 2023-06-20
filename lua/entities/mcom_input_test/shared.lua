@@ -2,6 +2,7 @@ ENT.Type = "anim"
 ENT.Base = "mcom_peripheral_base" -- test if this works
 
 ENT.PrintName = "Input tester"
+ENT.Category = "Mirai Computer System"
 
 ENT.Spawnable = true
 ENT.AdminOnly = true

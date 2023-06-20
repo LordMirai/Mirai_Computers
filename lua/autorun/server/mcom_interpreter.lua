@@ -116,7 +116,7 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
 
     -- ! check argument validity
     if cmdData.arguments then -- arg validation active
-        for i in 1, #cmdData.arguments do -- for each argument (we use this so we can overwrite the arguments table)
+        for i = 1, #cmdData.arguments do -- for each argument (we use this so we can overwrite the arguments table)
             local argEntry = cmdData.arguments[i]
             local arg = arguments[i] or nil
             if argEntry.optional == false and not arg then

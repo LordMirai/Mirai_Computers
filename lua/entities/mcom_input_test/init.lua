@@ -6,7 +6,7 @@ include("shared.lua")
 
 
 function ENT:peripheralInit()
-	local mdl = "" -- model here, some cube
+	local mdl = "models/Combine_Helicopter/helicopter_bomb01.mdl" -- model here, some cube
 	self:setup(mdl, "Tester", false, "INTEST")
 
 	self:SetColor(MCom.Colors.Black)
@@ -16,14 +16,15 @@ function ENT:behavior() -- attach this to onTick or other such thing to implemen
 
 end
 
-function self:setupPorts()
+function ENT:setupPorts()
 	-- set up the listen ports
 	self:addPort({
 		name = "Read input",
 		read = true,
 		port = 2,
-		registers = {"K","L"} -- read color from K,L
+		registers = {"K","L"}, -- read color from K,L
 		callback = function(self, portValue, regK, regL)
+			print(self.serial,"Read input: " .. tostring(portValue) .. " " .. tostring(regK) .. " " .. tostring(regL))
 			local onColor = regK != 0 and regK or MCom.Colors.Green
 			local offColor = regL != 0 and regL or MCom.Colors.Red
 			self:SetColor(portValue and onColor or offColor) -- set the color by port and registers

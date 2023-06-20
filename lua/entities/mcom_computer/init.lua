@@ -103,14 +103,14 @@ function ENT:init()
 end
 
 local function fpin(pin)
-	return tostring(math.Clamp(math.floor(toumber(pin) or 0), 1, 10))
+	return tostring(math.Clamp(math.floor(tonumber(pin) or 0), 1, 10))
 end
 
 local function fport(port) -- individual functions in case I want to change the format or count later
-	return tostring(math.Clamp(math.floor(toumber(port) or 0), 1, 10))
+	return tostring(math.Clamp(math.floor(tonumber(port) or 0), 1, 10))
 end
 
-local fportstr(pin) -- "format port as string"
+local function fportstr(pin) -- "format port as string"
 	return "Port"..fport(pin)
 end
 
@@ -216,7 +216,7 @@ function ENT:tick()
 end
 
 function ENT:selectPort()
-	for i in 1,self.portCount do
+	for i = 1,self.portCount do
 		if not self.Ports[fportstr(i)] then
 			return fportstr(i) -- return the first available port
 		end
@@ -236,7 +236,7 @@ function ENT:wait(ticks, callback, ...)
 end
 
 function ENT:peripheralConnected(perip)
-
+	perip:onConnected(self)
 end
 
 function ENT:connectPeripheral(perip, port)
@@ -245,17 +245,16 @@ function ENT:connectPeripheral(perip, port)
 	if tostring(tonumber(port)) == port then -- if port is a number, convert it to a string
 		port = fportstr(port)
 	end
-	if not self.Ports[port] then return end
-	if self.Ports[port]:IsValid() then return end
-
+	print("Connecting peripheral to port",port)
+	
 	self.Ports[port] = perip
-	perip:SetParent(self)
+	perip.parent = self
 	perip:SetPort(port)
 	self:peripheralConnected(perip)
 end
 
 function ENT:poll() -- check all connected peripherals and disconnect if invalid
-	for i in 1,self.portCount do
+	for i = 1,self.portCount do
 		local port = fportstr(i)
 		if not self.Ports[port] or not self.Ports[port]:IsValid() then
 			self.Ports[port] = nil
@@ -268,11 +267,14 @@ function ENT:tick() -- ovr computer tick
 end
 
 function ENT:isConnected(ent)
-	for i in 1,self.portCount do
+	PrintTable(self.Ports)
+	for i = 1,self.portCount do
 		local port = fportstr(i)
 		if self.Ports[port] == ent then
+			print("yes is connected")
 			return true
 		end
 	end
+	print("no is not connected")
 	return false
 end

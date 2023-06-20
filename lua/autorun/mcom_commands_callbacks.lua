@@ -6,7 +6,7 @@ MCom.Callbacks = MCom.Callbacks or {}
 -- command callbacks, including precondition and postcondition
 
 MCom.Callbacks["register"] = function(ply, origin, regIn)
-    regIn = regIn or ""
+    regIn = string.upper(regIn) or ""
     if not IsValid(origin) then return end
 
     local registers = origin.Architecture.Registers
@@ -16,7 +16,7 @@ MCom.Callbacks["register"] = function(ply, origin, regIn)
         if not reg then 
             msg = string.format("Register %s does not exist.\n", regIn)
         else
-            msg = string.format("%s%s: %s\n", msg, regIn, reg)
+            msg = string.format("%s%s: %s\n", msg, regIn, tostring(reg))
         end
     else
         for k, v in pairs(registers) do
@@ -96,7 +96,7 @@ end
 
 local function clock(origin, pin, interval)
     if not IsValid(origin) then return end
-    origin:togglePin(pin)
+    origin:toggleOutput(pin)
     timer.Simple(interval, function()
         clock(origin, pin, interval)
     end)

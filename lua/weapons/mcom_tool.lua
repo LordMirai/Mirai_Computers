@@ -167,7 +167,7 @@ function SWEP:secondary()
 	end
 end
 
-function ENT:reset(manual)
+function SWEP:reset(manual)
 	if SERVER then
 		manual = manual or false
 		self.hasFirst = false

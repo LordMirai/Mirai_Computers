@@ -15,6 +15,7 @@ function ENT:init() -- ovr ent_base
 	
 	self:generateSerial()
 	self:generateMAC()
+	self.parent = nil
 
 	--[[
 		Peripherals should communicate with the computer via the computer's IO ports and registers
@@ -24,6 +25,13 @@ function ENT:init() -- ovr ent_base
 	self.Ports = {}
 
 	self:setupPorts()
+
+	hook.Add("ComputerTick", self.serial, function(ent)
+		if not IsValid(self.parent) then return end
+		if ent == self.parent then
+			self:onTick()
+		end
+	end)
 end
 
 function ENT:peripheralInit()
@@ -39,14 +47,14 @@ end
 
 function ENT:connect(ent, port)
 	if ent.isComputer then
-		self:SetParent(ent)
+		self.parent = ent
 		self:SetPort(port)
 	end
 
 	self:onConnected(ent)
 end
 
-function self:setupPorts()
+function ENT:setupPorts()
 	-- set up the listen ports
 	local portTemplate = {
 		name = "Should Activate",
@@ -63,21 +71,25 @@ function self:setupPorts()
 end
 
 function ENT:addPort(portTable)
+	print("Port added")
+	PrintTable(portTable)
 	table.insert(self.Ports, portTable)
 	-- callback on port change
 	local id = self.serial..portTable.port
 
 	if portTable.read then
 		hook.Add("ComputerPortChange", id, function(ent, port, val)
-			if ent == self:GetParent() then
-				if port == portTable.port then
+			if ent == self.parent then
+				print(port,portTable.port,port == portTable.port)
+				if tonumber(port) == tonumber(portTable.port) then
+					print("call on input")
 					self:onInput(portTable, val)
 				end
 			end
 		end)
 	else
 		hook.Add("PeripheralPortChange", id, function(ent, port, val)
-			if ent == self:GetParent() then
+			if ent == self.parent then
 				if port == portTable.port then
 					self:onOutput(portTable, val)
 				end
@@ -87,9 +99,9 @@ function ENT:addPort(portTable)
 end
 
 function ENT:onInput(port, val) -- basically an event listener
-	if not self:GetParent() then return end
+	if not self.parent then return end
 	-- any overrides are acceptable
-	local regs = self:GetParent().Architecture.Registers
+	local regs = self.parent.Architecture.Registers
 	local regValues = {}
 	for k, v in pairs(port.registers) do
 		regValues[v] = regs[v] or 0
@@ -98,7 +110,7 @@ function ENT:onInput(port, val) -- basically an event listener
 end
 
 function ENT:onOutput(port,val) -- only write pin value here, regs written in callback
-	self:GetParent():setInput(port.port, val)
+	self.parent:setInput(port.port, val)
 end
 
 
@@ -107,21 +119,15 @@ function ENT:onTick() -- Called every parent tick
 end
 
 function ENT:setOutputPin(pin, val)
-	if not self:GetParent() then return end
-	hook.Run("PeripheralPortChange", self:GetParent(), pin, val)
+	if not self.parent then return end
+	hook.Run("PeripheralPortChange", self.parent, pin, val)
 end
-
-hook.Add("ComputerTick", self.serial, function(ent)
-	if ent == self:GetParent() then
-		self:onTick()
-	end
-end)
 
 function ENT:onConnected(parent)
 	-- ovr
 end
 
 function ENT:writeRegister(reg, val)
-	if not self:GetParent() then return end
-	self:GetParent():write(val)
+	if not self.parent then return end
+	self.parent:write(val)
 end

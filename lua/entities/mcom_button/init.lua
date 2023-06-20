@@ -24,13 +24,13 @@ function ENT:onUse(ply)
 	end
 end
 
-function self:setupPorts()
+function ENT:setupPorts()
 	-- set up the listen ports
 	self:addPort({
 		name = "Write out",
 		read = false,
 		port = 4,
-		registers = {"M"} -- write press count to M
+		registers = {"M"}, -- write press count to M
 		callback = function(self, portValue, regM)
 			regM = self.activateCount
 			self:writeRegister("M", regM)
