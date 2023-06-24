@@ -6,7 +6,7 @@ include("shared.lua")
 
 
 function ENT:peripheralInit()
-	local mdl = "" -- model here, some cube
+	local mdl = "models/maxofs2d/button_05.mdl" -- model here, some cube
 	self:setup(mdl, "Button", false, "BTN")
 	self.activateCount = 0
 end

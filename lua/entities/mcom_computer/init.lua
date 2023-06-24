@@ -5,7 +5,7 @@ include("shared.lua")
 
 
 function ENT:init()
-	self:SetModel("models/props_office/computer_monitor04.mdl") -- change to tower instead of monitor
+	self:SetModel("models/props/cs_office/computer_case.mdl") -- change to tower instead of monitor
 	self.isComputer = true
 	self.isTerminal = true -- alias for isComputer
 	self.isInUse = false
@@ -139,7 +139,7 @@ end
 function ENT:write(register, value)
 	register = string.upper(register)
 	if not self.Architecture.Registers[register] then return end
-	self.Architecture.Registers[register] = value or false
+	self.Architecture.Registers[register] = value or 0
 end
 
 function ENT:read(register)
@@ -277,4 +277,19 @@ function ENT:isConnected(ent)
 	end
 	print("no is not connected")
 	return false
+end
+
+function ENT:clearRegisters()
+	for k,v in pairs(self.Architecture.Registers) do
+		self:write(k, 0)
+	end
+end
+
+function ENT:shutdown()
+	self:output("System shut down.")
+	self:clearRegisters()
+end
+
+function ENT:startup()
+	self:output("System started up.")
 end

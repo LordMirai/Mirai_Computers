@@ -131,6 +131,20 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
                 return MCom.stdErr(msg)
             end
 
+            if argEntry.positive then
+                if tonumber(arg) < 0 then
+                    local msg = string.format("Error at argument %d - Positive number expected.", i)
+                    return MCom.stdErr(msg)
+                end
+            end
+
+            if argEntry.nonzero then
+                if tonumber(arg) == 0 then
+                    local msg = string.format("Error at argument %d - Non-zero number expected.", i)
+                    return MCom.stdErr(msg)
+                end
+            end
+
             if returned then -- we change the arg (such as turning "red" into MCom.Colors.Red)
                 arguments[i] = returned -- override the given arg
             end

@@ -38,6 +38,7 @@ hook.Add("InitPostEntity", "MCom_PairCommandsToGroups", function()
 
     timer.Simple(1, function() -- we wait a bit, for any other command initialization to finish
         MCom.refreshCommands()
+        MCom.hotReload = true
     end)
 end)
 
@@ -54,6 +55,7 @@ end)
     ext - External (send, request, set, reset)
     misc - Miscellaneous (random, roll, flip, etc)
     perip - Peripheral (perip, peripinfo, refresh)
+    file - Filesystem (read, write, delete, etc)
     none - No group (help, ping, etc)
 
     The idea is to first specify the group, then the command.

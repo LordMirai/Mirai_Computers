@@ -105,5 +105,10 @@ end
 MCom.Callbacks["clock"] = function(ply, origin, pin, interval)
     interval = tonumber(interval) or 1
     origin:output(string.format("Starting clock on pin %s with interval %s", pin, interval))
-    clock(origin, pin, interval)    
+    clock(origin, pin, interval)
+end
+
+if MCom.hotReload then -- will only work locally hosted, not on dedicated servers
+    MCom.refreshCommands()
+    print("hot reload fired")
 end
