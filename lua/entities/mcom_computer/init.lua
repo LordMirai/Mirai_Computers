@@ -311,8 +311,7 @@ function ENT:getPeripheral(criteria)
 		end
 
 		for i = 1,self.portCount do
-			local port = fportstr(i)
-			local enry = self.Ports[port]
+			local enry = self.Ports[fportstr(i)]
 			if entry and entry:IsValid() then
 				if entry:getName() == criteria or entry:getSerial() == criteria or entry:getMAC() == criteria then
 					return entry
@@ -320,10 +319,9 @@ function ENT:getPeripheral(criteria)
 			end
 		end
 	elseif isentity(criteria) then
-		if criteria:GetClass() == "mcom_peripheral" then
+		if criteria.isPeripheral then
 			for i = 1,self.portCount do
-				local port = fportstr(i)
-				local entry = self.Ports[port]
+				local entry = self.Ports[fportstr(i)]
 				if entry and entry:IsValid() then
 					if entry == criteria then
 						return entry
@@ -350,4 +348,5 @@ function ENT:wrap(peripheral,name)
 	name = string.Trim(string.lower(name))
 	if name == "" then return end
 	self.wrappedPeripherals[name] = peripheral
+	return true
 end

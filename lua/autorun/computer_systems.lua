@@ -368,6 +368,26 @@ MCom.Systems["peripheral"] = {
             example = "peripheral wrap (name)",
             category = "peripheral",
             fallback = "peripheral_wrap"
+        },
+        ["name"] = {
+            name = "Name",
+            desc = "Sets the name of a peripheral",
+            action = MCom.Callbacks["peripheral_name"],
+            example = "peripheral name (identifier) (newName)",
+            category = "peripheral",
+            fallback = "peripheral_name",
+            arguments = {
+                {
+                    name = "identifier",
+                    type = "string",
+                    optional = false
+                },
+                {
+                    name = "newName",
+                    type = "string",
+                    optional = false
+                }
+            }
         }
     }
 }

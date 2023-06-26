@@ -257,12 +257,11 @@ MCom.Callbacks["peripheral_call"] = function(ply, origin, name, func, ...)
         msg = msg .. string.format("Type: %s\n", per:getType())
         msg = msg .. string.format("Connection info: %s\n", per:connectionInfo())
         origin:output(msg)
-        local func = per[func]
+        local func = per.actions[func]
         if func then
             local args = {...}
-            local ret = func(unpack(args))
-            msg = string.format("Function %s called!\n", func)
-            msg = msg .. string.format("Return value: %s\n", tostring(ret))
+            local ret = func(ply, origin, unpack(args))
+            msg = string.format("Function %s called with args %s\n", func, table.concat(args, ", "))
             origin:output(msg)
         else
             msg = string.format("Function %s not found!\n", func)
@@ -280,14 +279,12 @@ MCom.Callbacks["peripheral_bind"] = function(ply, origin, identifier, reg) -- bi
     origin:output(msg)
     local per = origin:getPeripheral(identifier)
     if per then
-        msg = string.format("Peripheral %s found!\n", identifier)
-        msg = msg .. string.format("Type: %s\n", per:getType())
-        msg = msg .. string.format("Connection info: %s\n", per:connectionInfo())
-        origin:output(msg)
         local wrapped = per:wrap()
-        msg = string.format("Peripheral %s wrapped!\n", identifier)
-        msg = msg .. string.format("Type: %s\n", wrapped:getType())
-        msg = msg .. string.format("Connection info: %s\n", wrapped:connectionInfo())
+        if wrapped then
+            msg = string.format("Peripheral %s bound to register %s!\n", identifier, reg)
+        else
+            msg = string.format("Peripheral %s could not be bound to register %s!\n", identifier, reg)
+        end
         origin:output(msg)
     else
         msg = string.format("Peripheral %s not found!\n", identifier)
@@ -318,6 +315,20 @@ MCom.Callbacks["peripheral_wrap"] = function(ply, origin, identifier, name) -- w
 
     local msg = string.format("Peripheral %s wrapped under name '%s'...\n", identifier, name)
     origin:output(msg)
+end
+
+MCom.Callbacks["peripheral_name"] = function(ply, origin, identifier, name)
+    local msg = string.format("Renaming peripheral %s to %s...\n", identifier, name)
+    origin:output(msg)
+    local per = origin:getPeripheral(identifier)
+    if per then
+        per:setName(name)
+        msg = string.format("Peripheral %s renamed to %s!\n", identifier, name)
+        origin:output(msg)
+    else
+        msg = string.format("Peripheral %s not found!\n", identifier)
+        origin:output(msg)
+    end
 end
 
 

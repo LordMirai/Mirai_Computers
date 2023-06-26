@@ -32,6 +32,12 @@ function ENT:init() -- ovr ent_base
 			self:onTick()
 		end
 	end)
+
+	self.actions = {
+		"info" = function(ply, origin)
+			origin:output(self:connectionInfo())
+		end,
+	}
 end
 
 function ENT:peripheralInit()
@@ -141,3 +147,4 @@ function ENT:connectionInfo()
 	local msg = string.format("%s: Status - %s; ", self:GetType(), connected)
 	msg = msg .. string.format("Serial - %s; Port %s", self.serial, self.mac)
 end
+
