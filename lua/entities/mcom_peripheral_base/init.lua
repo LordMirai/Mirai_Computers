@@ -38,6 +38,10 @@ function ENT:peripheralInit()
 	-- override. Should use :setup() here
 end
 
+function ENT:isConnected()
+	return IsValid(self.parent)
+end
+
 function ENT:setup(model, type, initState, prefix)
 	self:SetModel(model or "")
 	self:SetType(type or "Peripheral")
@@ -130,4 +134,10 @@ end
 function ENT:writeRegister(reg, val)
 	if not self.parent then return end
 	self.parent:write(val)
+end
+
+function ENT:connectionInfo()
+	local connected = self:isConnected() and "Connected" or "Not Connected"
+	local msg = string.format("%s: Status - %s; ", self:GetType(), connected)
+	msg = msg .. string.format("Serial - %s; Port %s", self.serial, self.mac)
 end

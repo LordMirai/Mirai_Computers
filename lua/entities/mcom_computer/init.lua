@@ -100,6 +100,8 @@ function ENT:init()
 	}
 	self.portCount = 10
 
+	self.wrappedPeripherals = {} -- peripherals bound by name
+
 end
 
 local function fpin(pin)
@@ -136,10 +138,13 @@ function ENT:toggleOutput(pin)
 	self:setOutput(pin, not self:getOutput(pin))
 end
 
-function ENT:write(register, value)
+function ENT:write(register, value, allowTC) -- allowTC is for the tick counter, which should not be written to by peripherals
+	allowTC = allowTC or true
 	register = string.upper(register)
-	if not self.Architecture.Registers[register] then return end
+	if not self.Architecture.Registers[register] then return false end
+	if register == "TC" and not allowTC then return false end
 	self.Architecture.Registers[register] = value or 0
+	return true -- returns true if successful, false if not
 end
 
 function ENT:read(register)
@@ -176,13 +181,6 @@ function ENT:endUse()
 	self:SetUser(nil)
 end
 
-function ENT:StartTouch(otherEnt)
-	-- peripheral connection
-end
-
-function ENT:OnRemove()
-	-- remove connections
-end
 
 function ENT:info()
 	return string.format("Computer serial: %s; MAC: %s", self.serial, self.mac)
@@ -236,6 +234,8 @@ function ENT:wait(ticks, callback, ...)
 end
 
 function ENT:peripheralConnected(perip)
+	-- make a physical connection, through a wire or something
+	-- also make a sound for it
 	perip:onConnected(self)
 end
 
@@ -245,7 +245,7 @@ function ENT:connectPeripheral(perip, port)
 	if tostring(tonumber(port)) == port then -- if port is a number, convert it to a string
 		port = fportstr(port)
 	end
-	print("Connecting peripheral to port",port)
+	print("Connecting peripheral to port ",port)
 	
 	self.Ports[port] = perip
 	perip.parent = self
@@ -292,4 +292,62 @@ end
 
 function ENT:startup()
 	self:output("System started up.")
+end
+
+function ENT:getPeripheral(criteria)
+	-- ? criteria can be: perip name, serial, MAC or origin register letter. Returns the entity or nil if not found
+	if not criteria then return end
+	if isstring(criteria) then
+		-- if criteria from A-Z
+		if string.match(criteria, "[A-Z]") then
+			local entry = self:read(criteria)
+			if entry and isentity(entry) and entry:IsValid() and entry.isPeripheral then
+				return entry
+			end
+		end
+
+		if self.wrappedPeripherals[string.lower(criteria)] then
+			return self.wrappedPeripherals[string.lower(criteria)]
+		end
+
+		for i = 1,self.portCount do
+			local port = fportstr(i)
+			local enry = self.Ports[port]
+			if entry and entry:IsValid() then
+				if entry:getName() == criteria or entry:getSerial() == criteria or entry:getMAC() == criteria then
+					return entry
+				end
+			end
+		end
+	elseif isentity(criteria) then
+		if criteria:GetClass() == "mcom_peripheral" then
+			for i = 1,self.portCount do
+				local port = fportstr(i)
+				local entry = self.Ports[port]
+				if entry and entry:IsValid() then
+					if entry == criteria then
+						return entry
+					end
+				end
+			end
+		end
+	end
+end
+
+function ENT:getPeripherals()
+	local periphs = {}
+	for i = 1,self.portCount do
+		local port = fportstr(i)
+		local entry = self.Ports[port]
+		if entry and entry:IsValid() then
+			table.insert(periphs, entry)
+		end
+	end
+	return periphs
+end
+
+function ENT:wrap(peripheral,name)
+	name = string.Trim(string.lower(name))
+	if name == "" then return end
+	self.wrappedPeripherals[name] = peripheral
 end

@@ -86,14 +86,6 @@ MCom.Callbacks["tick"] = function(ply, origin, count)
     tickerFunc(origin,count)
 end
 
-MCom.Callbacks["io_write"] = function(ply, origin, pin, val)
-    local out = (val == "true" or val == "1") and true or false
-    -- origin:output("Writing " .. tostring(out) .. " to pin " .. pin)
-    local msg = string.format("Writing %s to pin %s", tostring(out), pin)
-    origin:output(msg)
-    origin:setOutput(pin, out)
-end
-
 local function clock(origin, pin, interval)
     if not IsValid(origin) then return end
     origin:toggleOutput(pin)
@@ -107,6 +99,245 @@ MCom.Callbacks["clock"] = function(ply, origin, pin, interval)
     origin:output(string.format("Starting clock on pin %s with interval %s", pin, interval))
     clock(origin, pin, interval)
 end
+
+MCom.Callbacks["echo"] = function(ply origin, ...) -- not sure how I haven't implemented this yet
+    local msg = table.concat({...}, " ")
+    origin:output(msg)
+end
+
+MCom.Callbacks["random"] = function(ply, origin, reg, min, max)
+    min = min or 0
+    max = max or 100
+
+    local rand = math.random(min, max)
+    local success = origin:write(reg, rand, false)
+    if success then
+        origin:output(string.format("Wrote %s to %s", rand, reg))
+    else
+        origin:output("Failed to write to register. Register does not exist.")
+    end
+end
+
+-- ? Network system
+
+MCom.Callbacks["net"] = function(ply, origin)
+    local msg = "Network system. Based on IP and uses network ports.\n"
+    msg = msg .. "Available commands:\n"
+    origin:output(msg)
+end
+
+MCom.Callbacks["net_ping"] = function(ply, origin, ip)
+    local msg = string.format("Pinging %s...\n", ip)
+    origin:ping(ip) -- TBI
+end
+
+MCom.Callbacks["net_connect"] = function(ply, origin, ip)
+    local msg = string.format("Connecting to %s...\n", ip)
+    origin:connectNetwork(ip) -- TBI
+end
+
+MCom.Callbacks["net_disconnect"] = function(ply, origin, ip)
+    local msg = string.format("Disconnecting from %s...\n", ip)
+    origin:connectNetwork(ip) -- TBI
+end
+
+MCom.Callbacks["net_send"] = function(ply, origin, ip, port, ...)
+    local msgIn = table.concat({...}, " ")
+    local msg = string.format("Sending message %s to %s:%s...\n", msgIn, ip, port)
+    origin:sendNetwork(ip, port, msg) -- TBI. Will write the thing to the receiver
+end
+
+
+-- ? IO system
+
+MCom.Callbacks["io"] = function(ply, origin)
+    local msg = "IO system. Based on pins.\n"
+    msg = msg .. "Available commands:\n"
+    origin:output(msg)
+end
+
+MCom.Callbacks["io_write"] = function(ply, origin, pin, val)
+    local out = (val == "true" or val == "1") and true or false
+    -- origin:output("Writing " .. tostring(out) .. " to pin " .. pin)
+    local msg = string.format("Writing %s to pin %s", tostring(out), pin)
+    origin:output(msg)
+    origin:setOutput(pin, out)
+end
+
+MCom.Callbacks["io_read"] = function(ply, origin, pin)
+    local msg = string.format("Reading pin %s: %s", pin, tostring(origin:getInput(pin)))
+    origin:output(msg)
+end
+
+MCom.Callbacks["io_toggle"] = function(ply, origin, pin)
+    local msg = string.format("Toggling pin %s", pin)
+    origin:output(msg)
+    origin:toggleOutput(pin)
+end
+
+MCom.Callbacks["io_getall"] = function(ply, origin)
+    local msg = "Pin values:\n\nInput:\n"
+    for i=1,10 do
+        msg = msg .. string.format("Pin%s = %s\n", i, origin:getInput(i))
+    end
+    msg = msg .. "\nOutput:\n"
+    for i=1,10 do
+        msg = msg .. string.format("Pin%s = %s\n", i, origin:getOutput(i))
+    end
+end
+
+MCom.Callbacks["io_setall"] = function(ply, origin, val)
+    val = (val == 1) or false
+    for i=1,10 do
+        origin:setOutput(val)
+    end
+    origin:output("All pins set to "..tostring(val))
+end
+
+
+-- ? System commands
+
+MCom.Callbacks["sys"] = function(ply, origin)
+    local msg = "System commands:\n"
+    msg = msg .. "Available commands:\n"
+    origin:output(msg)
+end
+
+MCom.Callbacks["sys_info"] = function(ply, origin)
+    local msg = "System info:\n"
+    msg = msg .. string.format("Serial: %s\n", origin:getSerial())
+    msg = msg .. string.format("MAC: %s\n", origin:getMAC())
+    msg = msg .. string.format("IP: %s\n", origin:getIP())
+    msg = msg .. string.format("System up for %s ticks\n", origin:read("TC"))
+    msg = msg .. "Peripheral info:\n"
+    for _,v in ipairs(origin:getPeripherals()) do
+        local data = v:connectionInfo() -- ! TBI priority
+        msg = msg .. string.format("%s: %s\n", v:getName(), data)
+    end
+    origin:output(msg)
+end
+
+
+-- ? Peripheral
+
+MCom.Callbacks["peripheral"] = function(ply, origin)
+    local msg = "Peripheral commands:\n"
+    origin:output(msg)
+end
+
+MCom.Callbacks["peripheral_list"] = function(ply, origin)
+    local msg = "Peripherals:\n"
+    for k,v in pairs(origin:getPeripherals()) do
+        msg = msg .. string.format("%s: %s\n", k, v:connectionInfo())
+    end
+    origin:output(msg)
+end
+
+MCom.Callbacks["peripheral_get"] = function(ply, origin, name) -- ! check all of the below.
+    local msg = string.format("Getting peripheral %s...\n", name)
+    origin:output(msg)
+    local per = origin:getPeripheral(name)
+    if per then
+        msg = string.format("Peripheral %s found!\n", name)
+        msg = msg .. string.format("Type: %s\n", per:getType())
+        msg = msg .. string.format("Connection info: %s\n", per:connectionInfo())
+        origin:output(msg)
+    else
+        msg = string.format("Peripheral %s not found!\n", name)
+        origin:output(msg)
+    end
+end
+
+MCom.Callbacks["peripheral_call"] = function(ply, origin, name, func, ...)
+    local msg = string.format("Calling function %s on peripheral %s...\n", func, name)
+    origin:output(msg)
+    local per = origin:getPeripheral(name)
+    if per then
+        msg = string.format("Peripheral %s found!\n", name)
+        msg = msg .. string.format("Type: %s\n", per:getType())
+        msg = msg .. string.format("Connection info: %s\n", per:connectionInfo())
+        origin:output(msg)
+        local func = per[func]
+        if func then
+            local args = {...}
+            local ret = func(unpack(args))
+            msg = string.format("Function %s called!\n", func)
+            msg = msg .. string.format("Return value: %s\n", tostring(ret))
+            origin:output(msg)
+        else
+            msg = string.format("Function %s not found!\n", func)
+            origin:output(msg)
+        end
+    else
+        msg = string.format("Peripheral %s not found!\n", name)
+        origin:output(msg)
+    end
+end
+
+MCom.Callbacks["peripheral_bind"] = function(ply, origin, identifier, reg) -- binding a peripheral to a register
+    if not reg then reg = "P" end
+    local msg = string.format("Wrapping peripheral %s to register %s...\n", identifier, reg)
+    origin:output(msg)
+    local per = origin:getPeripheral(identifier)
+    if per then
+        msg = string.format("Peripheral %s found!\n", identifier)
+        msg = msg .. string.format("Type: %s\n", per:getType())
+        msg = msg .. string.format("Connection info: %s\n", per:connectionInfo())
+        origin:output(msg)
+        local wrapped = per:wrap()
+        msg = string.format("Peripheral %s wrapped!\n", identifier)
+        msg = msg .. string.format("Type: %s\n", wrapped:getType())
+        msg = msg .. string.format("Connection info: %s\n", wrapped:connectionInfo())
+        origin:output(msg)
+    else
+        msg = string.format("Peripheral %s not found!\n", identifier)
+        origin:output(msg)
+    end
+end
+
+MCom.Callbacks["peripheral_wrap"] = function(ply, origin, identifier, name) -- wrapping a peripheral under a name (variable)
+    if not name then name = identifier end
+
+    if string.match(string.upper(name), "[A-Z]") or string.upper(name) == "TC" then
+        local msg = string.format("Cannot wrap peripherals under name %s (register)!\n", identifier, name)
+        origin:output(msg)
+        return
+    end
+
+    local msg = string.format("Wrapping peripheral %s...\n", identifier)
+    origin:output(msg)
+    
+    local per = origin:getPeripheral(identifier)
+    if not per then
+        msg = string.format("Peripheral %s not found!\n", identifier)
+        origin:output(msg)
+        return
+    end
+
+    origin:wrap(per, name)
+
+    local msg = string.format("Peripheral %s wrapped under name '%s'...\n", identifier, name)
+    origin:output(msg)
+end
+
+
+-- ? GOD protocols
+
+MCom.Callbacks["god"] = function(ply, origin)
+    local msg = "GOD protocol - A way to run commands on the terminal automatically.\n"
+    msg = msg .. "Available commands:\n"
+    origin:output(msg)
+end
+
+MCom.Callbacks["god_test"] = function(ply, origin)
+    local msg = "GOD protocol test command.\n"
+    origin:output(msg)
+    origin:run("tick 2")
+    origin:run("clock 1.5 2")
+    origin:output("god protocol test complete")
+end
+
+-- * break
 
 if MCom.hotReload then -- will only work locally hosted, not on dedicated servers
     MCom.refreshCommands()

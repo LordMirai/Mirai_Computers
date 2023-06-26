@@ -19,7 +19,8 @@ MCom.Interpreter = MCom.Interpreter or {}
 MCom.Groups = MCom.Groups or {}
 
 function ENT:SetupDataTables()
-	
+	self:NetworkVar("String", 0, "Serial") -- ALL ents MUST have serial and MAC
+    self:NetworkVar("String", 1, "MAC")
 end
 
 ENT.sounds = {

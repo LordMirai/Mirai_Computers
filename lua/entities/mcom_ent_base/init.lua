@@ -37,6 +37,7 @@ function ENT:Initialize()
 	self.serial = "ENT-0000000000" -- only placeholders. use generateSerial() to generate a serial
 	self.mac = "XX-XX-XX-XX-XX-XX" -- use generateMAC() to generate a MAC address
 
+	self.name = "MCom_unnamed_device"
 	
 	self:init()
 	self:PhysicsInit(SOLID_VPHYSICS) -- set here to adjust for model change
@@ -159,4 +160,27 @@ function ENT:scanSetup(scanTime, scanRange, ignoredEnts, useWhitelist) -- put th
 	self.whitelist = useWhitelist
 	self.blacklist = not useWhitelist
 	self.ignoredEnts = ignoredEnts or {}
+end
+
+function ENT:getSerial()
+	return self.serial
+end
+
+function ENT:getMAC()
+	return self.mac
+end
+
+function ENT:getMac() -- alias
+	return self:getMAC()
+end
+
+function ENT:setName(name) -- ? "Pretty" name, you'd have my_device_123
+	if not isstring(name) then return end
+	name = string.Trim(name)
+	if name == "" then return end
+	self.name = name
+end
+
+function ENT:getName()
+	return self.name or "MCom_unnamed_device"
 end

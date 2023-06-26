@@ -3,6 +3,7 @@ MCom.Commands = MCom.Commands or {}
 MCom.Systems = MCom.Systems or {}
 
 -- ! Module fully moved to computer_systems, lib MCom.Systems
+-- ! "Comands" module now deprecated. Migrate and remove.
 --[[command structure:
 -- ^ builtin
 

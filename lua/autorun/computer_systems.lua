@@ -74,6 +74,7 @@ end)
 -- ! current group-command action system is non functional, replacing with global Systems table
 
 -- ! make sure the systems are written *AFTER* the callbacks are defined, or else it will not work.
+-- ^ at this point, the action property is basically useless, but it's good to have
 
 MCom.Systems["os"] = {
     groupAction = {
@@ -161,6 +162,7 @@ MCom.Systems["net"] = {
             action = MCom.Callbacks["net_connect"],
             example = "net connect (address)",
             category = "network",
+            fallback = "net_connect"
         },
         ["disconnect"] = {
             name = "Disconnect",
@@ -168,6 +170,15 @@ MCom.Systems["net"] = {
             action = MCom.Callbacks["net_disconnect"],
             example = "net disconnect (address)",
             category = "network",
+            fallback = "net_disconnect"
+        },
+        ["send"] = {
+            name = "Send Message",
+            desc = "Sends a message to a remote system",
+            action = MCom.Callbacks["net_send"],
+            example = "net send (address) (message)",
+            category = "network",
+            fallback = "net_send"
         }
     }
 }
@@ -198,6 +209,15 @@ MCom.Systems["io"] = {
             category = "io",
             fallback = "io_write"
         },
+        ["toggle"] = {
+            name = "Toggle output",
+            desc = "Toggles the value of an output pin (0 -> 1, 1 -> 0)",
+            action = MCom.Callbacks["io_toggle"],
+            help = "io toggle (pin)",
+            example = "io toggle 1",
+            category = "io",
+            fallback = "io_toggle"
+        }
         ["getall"] = {
             name = "Get all",
             desc = "Gets the value of all input pins",
@@ -263,7 +283,109 @@ MCom.Systems["none"] = { -- * will need a fallback implementation to recognize
                     default = 1
                 }
             }
+        },
+        ["echo"] = {
+            name = "Echo",
+            desc = "Echoes the given text",
+            action = MCom.Callbacks["echo"],
+            help = "echo (text)",
+            example "echo this is a test",
+            fallback = "echo",
+            arguments = {
+                {
+                    name = "text",
+                    type = "string",
+                    optional = false
+                }
+            }
+        },
+        ["random"] = {
+            name = "Random",
+            desc = "Gets a random value",
+            action = MCom.Callbacks["random"],
+            help = "random (register) (min = 0) (max = 100)",
+            example = "random Y 32 64",
+            fallback = "random"
+            arguments = {
+                {
+                    name = "register",
+                    type = "string",
+                    optional = false
+                },
+                {
+                    name = "min",
+                    type = "number",
+                    optional = true,
+                    default = 0
+                },
+                {
+                    name = "max",
+                    type = "number",
+                    optional = true,
+                    default = 100
+                }
+            }
         }
     }
 }
 
+MCom.Systems["peripheral"] = {
+    groupAction = {
+        desc = "Peripheral commands",
+        action = MCom.Callbacks["peripheral"],
+        category = "peripheral",
+        fallback = "peripheral"
+    },
+    commands = {
+        ["list"] = {
+            name = "List",
+            desc = "Lists all peripherals",
+            action = MCom.Callbacks["peripheral_list"],
+            example = "peripheral list",
+            category = "peripheral",
+            fallback = "peripheral_list"
+        },
+        ["get"] = {
+            name = "Get",
+            desc = "Gets a peripheral by name",
+            action = MCom.Callbacks["peripheral_get"],
+            example = "peripheral get (name)",
+            category = "peripheral",
+            fallback = "peripheral_get"
+        },
+        ["call"] = {
+            name = "Call",
+            desc = "Calls a peripheral method",
+            action = MCom.Callbacks["peripheral_call"],
+            example = "peripheral call (name) (method) (args)",
+            category = "peripheral",
+            fallback = "peripheral_call"
+        },
+        ["wrap"] = {
+            name = "Wrap",
+            desc = "Wraps a peripheral",
+            action = MCom.Callbacks["peripheral_wrap"],
+            example = "peripheral wrap (name)",
+            category = "peripheral",
+            fallback = "peripheral_wrap"
+        }
+    }
+}
+
+MCom.Systems["god"] = {
+    groupAction = {
+        desc = "GOD protocol",
+        action = MCom.Callbacks["god"],
+        category = "special",
+        fallback = "god"
+    },
+    commands = {
+        ["test"] = {
+            name = "Test protocol",
+            desc = "Runs a few commands",
+            action = MCom.Callbacks["god_test"],
+            category = "special",
+            fallback = "god_test"
+        }
+    }
+}
