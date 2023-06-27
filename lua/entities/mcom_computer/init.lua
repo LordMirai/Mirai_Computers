@@ -143,6 +143,7 @@ function ENT:write(register, value, allowTC) -- allowTC is for the tick counter,
 	register = string.upper(register)
 	if not self.Architecture.Registers[register] then return false end
 	if register == "TC" and not allowTC then return false end
+	if value == nil then return false end -- ! NEVER EVER set a register to nil, it will remove it and make it unrecoverable
 	self.Architecture.Registers[register] = value or 0
 	return true -- returns true if successful, false if not
 end

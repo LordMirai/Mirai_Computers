@@ -184,3 +184,7 @@ end
 function ENT:getName()
 	return self.name or "MCom_unnamed_device"
 end
+
+function ENT:configure(ply)
+	MCom.Message(ply,"Entity not configurable.", MCom.Colors.Warning)
+end

@@ -5,29 +5,6 @@ MCom.Callbacks = MCom.Callbacks or {}
 
 -- command callbacks, including precondition and postcondition
 
-MCom.Callbacks["register"] = function(ply, origin, regIn)
-    regIn = string.upper(regIn) or ""
-    if not IsValid(origin) then return end
-
-    local registers = origin.Architecture.Registers
-    local msg = "Register values:\n"
-    if regIn != "" then
-        local reg = registers[regIn]
-        if not reg then 
-            msg = string.format("Register %s does not exist.\n", regIn)
-        else
-            msg = string.format("%s%s: %s\n", msg, regIn, tostring(reg))
-        end
-    else
-        for k, v in pairs(registers) do
-            msg = string.format("%s%s: %s\n", msg, k, v)
-        end
-    end
-
-    origin:output(msg)
-end
-
-
 -- ^ OS
 MCom.Callbacks["os"] = function(ply, origin)
     -- print available OS commands (shutdown, restart, etc)
@@ -347,6 +324,57 @@ MCom.Callbacks["god_test"] = function(ply, origin)
     origin:run("clock 1.5 2")
     origin:output("god protocol test complete")
 end
+
+MCom.Callbacks["god_inp_test"] = function(ply, origin)
+    origin:output("GOD protocol - input test")
+    origin:run("")
+end
+
+
+
+-- ? Registers
+
+MCom.Callbacks["reg"] = function(ply, origin)
+    origin:output("register commands:")
+end
+
+MCom.Callbacks["reg_read"] = function(ply, origin, regIn)
+    regIn = string.upper(regIn) or ""
+    if not IsValid(origin) then return end
+
+    local msg = string.format("Register %s has value %s", regIn, tostring(origin:read(regIn)))
+    origin:output(msg)
+end
+
+MCom.Callbacks["reg_write"] = function(ply, origin, regIn, val)
+    regIn = string.upper(regIn) or ""
+    if not IsValid(origin) then return end
+
+    local msg = string.format("Register %s set to value %s", regIn, tostring(val))
+    origin:output(msg)
+    origin:write(regIn, val)
+end
+
+MCom.Callbacks["reg_getall"] = function(ply, origin)
+    if not IsValid(origin) then return end
+
+    local msg = "Registers:\n"
+    for k,v in pairs(origin.Architecture.Registers) do
+        msg = msg .. string.format("%s: %s\n", k, tostring(v))
+    end
+    origin:output(msg)
+end
+
+MCom.Callbacks["reg_setall"] = function(ply, origin, val)
+    if not IsValid(origin) then return end
+
+    local msg = string.format("All registers set to value %s", tostring(val))
+    origin:output(msg)
+    for k,v in pairs(origin.Architecture.Registers) do
+        origin:write(k, val)
+    end
+end
+
 
 -- * break
 

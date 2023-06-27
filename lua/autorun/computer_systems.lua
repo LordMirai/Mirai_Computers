@@ -242,14 +242,6 @@ MCom.Systems["io"] = {
 MCom.Systems["none"] = { -- * will need a fallback implementation to recognize
     -- no group action
     commands = {
-        ["reg"] = {
-            name = "Register view",
-            alias = {"register", "reg"},
-            desc = "Lists all registers with their values",
-            action = MCom.Callbacks["register"],
-            example = "reg",
-            fallback = "register"
-        },
         ["tick"] = {
             name = "Ticker test",
             action = MCom.Callbacks["tick"],
@@ -406,6 +398,53 @@ MCom.Systems["god"] = {
             action = MCom.Callbacks["god_test"],
             category = "special",
             fallback = "god_test"
+        }
+    }
+}
+
+MCom.Systems["reg"] = {
+    groupAction = {
+        desc = "Register Commands",
+        action = MCom.Callbacks["reg"],
+        category = "system",
+        fallback = "god"
+    },
+    commands = {
+        ["write"] = {
+            name = "Write Register",
+            desc = "Writes a value to a register",
+            action = MCom.Callbacks["reg_write"],
+            help = "reg write (register) (value)",
+            example = "reg write X 5",
+            category = "system",
+            fallback = "reg_write",
+        },
+        ["read"] = {
+            name = "Read Register",
+            desc = "Reads a value from a register",
+            action = MCom.Callbacks["reg_read"],
+            help = "reg read (register)",
+            example = "reg read X",
+            category = "system",
+            fallback = "reg_read",
+        },
+        ["getall"] = {
+            name = "Get all",
+            desc = "Gets the value of all registers",
+            action = MCom.Callbacks["reg_getall"],
+            help = "reg getall",
+            example = "reg getall",
+            category = "system",
+            fallback = "reg_getall",
+        },
+        ["setall"] = {
+            name = "Set all",
+            desc = "Sets the value of all registers",
+            action = MCom.Callbacks["reg_setall"],
+            help = "reg setall (value)",
+            example = "reg setall 0",
+            category = "system",
+            fallback = "reg_setall",
         }
     }
 }

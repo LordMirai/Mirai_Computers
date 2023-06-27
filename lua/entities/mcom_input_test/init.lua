@@ -24,9 +24,23 @@ function ENT:setupPorts()
 		port = 2,
 		registers = {"K","L"}, -- read color from K,L
 		callback = function(self, portValue, regK, regL)
-			print(self.serial,"Read input: " .. tostring(portValue) .. " " .. tostring(regK) .. " " .. tostring(regL))
-			local onColor = regK != 0 and regK or MCom.Colors.Green
-			local offColor = regL != 0 and regL or MCom.Colors.Red
+			local msg = string.format("Read input: %s - %s, %s", tostring(portValue), tostring(regK), tostring(regL))
+			print(msg)
+			local onColor = MCom.Colors.Green
+			local offColor = MCom.Colors.Red
+
+			if regK != 0 then
+				if MCom.ColorStrings[regK] then
+					onColor = MCom.Colors[regK]
+				end
+			end
+
+			if regL != 0 then
+				if MCom.ColorStrings[regL] then
+					onColor = MCom.Colors[regL]
+				end
+			end
+
 			self:SetColor(portValue and onColor or offColor) -- set the color by port and registers
 		end,
 	})
