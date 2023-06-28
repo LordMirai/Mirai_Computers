@@ -26,6 +26,7 @@ function ENT:init()
 
 	self.Architecture = { -- to hold Registers and Memory
 		Registers = { -- initialize 26 general registers and a tick counter. This will very likely not be used too much tho
+		-- ! WARNING ! NEVER EVER set a register to nil, it will remove it and make it unrecoverable
 			["TC"] = 0, -- tick counter, technically "for how long was this computer active"
 			["A"] = 0, -- general purpose registers, 0 init but can be anything
 			["B"] = 0,
@@ -350,4 +351,10 @@ function ENT:wrap(peripheral,name)
 	if name == "" then return end
 	self.wrappedPeripherals[name] = peripheral
 	return true
+end
+
+function ENT:delay(ticks, pinOut)
+	self:wait(ticks, function() 
+		self:setOutput(pinOut, true)
+	end)
 end

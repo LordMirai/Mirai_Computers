@@ -96,6 +96,7 @@ function ENT:generateSerial() -- might be slightly slow, but it's only called on
 		serial = serial .. string.char(chars:byte(math.random(1, #chars))) -- random char from chars
 	end
 	self.serial = serial
+	self:SetSerial(serial)
 end
 
 function ENT:generateMAC(blockSize) -- default block size 2
@@ -111,6 +112,7 @@ function ENT:generateMAC(blockSize) -- default block size 2
 	end
 	mac = string.sub(mac, 2) -- remove first dash
 	self.mac = mac -- Will be a 6-block MAC address "XX-XX-XX-XX-XX-XX" by default
+	self:SetMAC(mac)
 end
 
 function ENT:startScan() -- tick

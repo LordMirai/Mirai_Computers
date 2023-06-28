@@ -12,3 +12,5 @@ util.AddNetworkString("MCom_LazyLoadReturnCL")
 
 util.AddNetworkString("MCom_ExecuteCommand")
 util.AddNetworkString("MCom_CloseTerminal")
+
+util.AddNetworkString("MCom_ConfigureIO")

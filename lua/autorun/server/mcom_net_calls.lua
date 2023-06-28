@@ -33,6 +33,12 @@ function MCom.net.computerMenu(ply, ent)
     net.Send(ply)
 end
 
+function MCom.net.configure(perip, comp, ply)
+    net.Start("MCom_ConfigureIO")
+    net.WriteEntity(perip)
+    net.WriteEntity(comp)
+    net.Send(ply)
+end
 
 
 

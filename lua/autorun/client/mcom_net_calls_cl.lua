@@ -40,7 +40,12 @@ function MCom.net.terminalClose(ent)
     net.SendToServer()
 end
 
-
+function MCom.net.lazy(ent, output)
+    net.Start("MCom_LazyLoad")
+    net.WriteEntity(ent)
+    net.WriteBool(output)
+    net.SendToServer()
+end
 
 
 
@@ -66,4 +71,25 @@ end)
 net.Receive("MCom_ComputerMenu", function()
     local ent = net.ReadEntity()
     ent:tempMenu()
+end)
+
+net.Receive("MCom_ConfigureIO", function()
+    local ent = net.ReadEntity()
+    local parent = net.ReadEntity()
+    ent:IOConfiguration(parent)
+end)
+
+net.Receive("MCom_LazyLoadReturnCL", function()
+    local ent = net.ReadEntity()
+    local output = net.ReadBool()
+    local data = net.ReadString()
+    data = util.JSONToTable(data)
+    
+    if MCom.activeIOConfig then
+        if not output then
+            MCom.activeIOConfig.inputs.populate(data)
+        else
+            MCom.activeIOConfig.outputs.populate(data)
+        end
+    end
 end)

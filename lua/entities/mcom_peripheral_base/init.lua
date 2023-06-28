@@ -3,7 +3,7 @@ AddCSLuaFile("shared.lua")
 
 include("shared.lua")
 
-
+MCom.net = MCom.net or {}
 
 function ENT:init() -- ovr ent_base
 
@@ -124,7 +124,7 @@ function ENT:onOutput(port,val) -- only write pin value here, regs written in ca
 end
 
 
-function ENT:onTick() -- Called every parent tick
+function ENT:onTick() -- Called every parent tick. Other periphs should probably tie their behavior to this
 	
 end
 
@@ -148,3 +148,14 @@ function ENT:connectionInfo()
 	msg = msg .. string.format("Serial - %s; Port %s", self.serial, self.mac)
 end
 
+function ENT:configure(user)
+	local parent = self.parent
+	if not parent then return end
+
+	if table.IsEmpty(self.Ports) then
+		MCom.Message(user,"No ports to configure")
+		return
+	end
+
+	MCom.net.configure(self, parent, user)
+end

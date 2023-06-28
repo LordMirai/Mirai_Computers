@@ -161,9 +161,18 @@ end
 function SWEP:secondary()
 	if SERVER then
 		local ply = self:GetOwner()
+		-- I want a system similar to WireMod where you can select an input to connect to an output
 
-		-- menu to select port
-		-- MCom.portMenu(ply, self.firstEnt)
+		local ent = ply:GetEyeTrace().Entity
+
+		if ent.isPeripheral then
+			if not ent:isConnected() then
+				MCom.Message(ply, "This peripheral is not connected to a computer!")
+				return
+			end
+
+			ent:configureIO(ply)
+		end
 	end
 end
 

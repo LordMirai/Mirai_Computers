@@ -317,6 +317,26 @@ MCom.Systems["none"] = { -- * will need a fallback implementation to recognize
                     default = 100
                 }
             }
+        },
+        ["delay"] = {
+            name = "Delay Trigger",
+            desc = "Sets an output pin after a delay",
+            action = MCom.Callbacks["delay"],
+            help = "delay (ticks) (pin)",
+            example = "delay 10 1",
+            fallback = "delay",
+            arguments = {
+                {
+                    name = "ticks",
+                    type = "number",
+                    optional = false
+                },
+                {
+                    name = "pin",
+                    type = "number",
+                    optional = false
+                }
+            }
         }
     }
 }
