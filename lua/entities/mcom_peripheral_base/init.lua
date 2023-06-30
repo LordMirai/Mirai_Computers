@@ -34,7 +34,7 @@ function ENT:init() -- ovr ent_base
 	end)
 
 	self.actions = {
-		"info" = function(ply, origin)
+		["info"] = function(ply, origin)
 			origin:output(self:connectionInfo())
 		end,
 	}
@@ -81,7 +81,7 @@ function ENT:setupPorts()
 end
 
 function ENT:addPort(portTable)
-	print("Port added")
+	print("Port added:")
 	PrintTable(portTable)
 	table.insert(self.Ports, portTable)
 	-- callback on port change

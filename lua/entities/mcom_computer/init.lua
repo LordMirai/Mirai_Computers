@@ -189,7 +189,7 @@ function ENT:info()
 end
 
 function ENT:executeCommand(user, cmd)
-	print(user,"Executed command",cmd)
+	print(user,"Executed command", cmd)
 	MCom.Interpreter.executeCommand(user, self, cmd)
 	local lastErr = MCom.getLastError()
 	self:write("X", lastErr.errorCode)
@@ -203,7 +203,7 @@ function ENT:output(msg)
 	-- for now, we'll print this to user's chat. We will later add a screen entity or other monitor/display system
 
 	if self:GetUser():IsValid() then
-		MCom.Message(self:GetUser(), string.format("Computer output: %s", msg))
+		MCom.Message(self:GetUser(), msg)
 	end
 end
 
@@ -277,7 +277,7 @@ function ENT:isConnected(ent)
 			return true
 		end
 	end
-	print("no is not connected")
+	print("no it's not connected")
 	return false
 end
 
@@ -298,7 +298,7 @@ end
 
 function ENT:getPeripheral(criteria)
 	-- ? criteria can be: perip name, serial, MAC or origin register letter. Returns the entity or nil if not found
-	if not criteria then return end
+	if not criteria then return false end
 	if isstring(criteria) then
 		-- if criteria from A-Z
 		if string.match(criteria, "[A-Z]") then
@@ -357,4 +357,8 @@ function ENT:delay(ticks, pinOut)
 	self:wait(ticks, function() 
 		self:setOutput(pinOut, true)
 	end)
+end
+
+function ENT:run(cmd) -- shorthand for CLI execution (mostly GOD protocol)
+	self:executeCommand(nil, cmd)
 end

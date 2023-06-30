@@ -72,8 +72,7 @@ end
 
 
 function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function. origin = terminal entity (computer) or nil if console
-    -- ? format: group* command arg1 arg2 arg3
-    -- *Group can be ignored if the command is not in a group 
+    -- ? format: [group] command arg1 arg2 arg3
     local cmd, args, argsNoCase = MCom.Interpreter.extractArgs(stringIn, false, true, true) -- extract the command and the args
     
     cmd = string.lower(cmd)
@@ -173,10 +172,12 @@ function MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap 
 
     -- PrintTable(cmdData)
 
-    if cmdData.admin then
-        if not ply:IsAdmin() then
-            MCom.Message(ply, "This command is admin only.")
-            return MCom.stdErr("Admin Only - "..cmdData.name, MCom.Execution.Unauthorized)
+    if IsPlayer(ply) then
+        if cmdData.admin then
+            if not ply:IsAdmin() then
+                MCom.Message(ply, "This command is admin only.")
+                return MCom.stdErr("Admin Only - "..cmdData.name, MCom.Execution.Unauthorized)
+            end
         end
     end
 

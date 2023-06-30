@@ -297,7 +297,7 @@ MCom.Systems["none"] = { -- * will need a fallback implementation to recognize
             action = MCom.Callbacks["random"],
             help = "random (register) (min = 0) (max = 100)",
             example = "random Y 32 64",
-            fallback = "random"
+            fallback = "random",
             arguments = {
                 {
                     name = "register",
@@ -418,6 +418,28 @@ MCom.Systems["god"] = {
             action = MCom.Callbacks["god_test"],
             category = "special",
             fallback = "god_test"
+        },
+        ["it"] = {
+            name = "Input test",
+            desc = "Tests input",
+            action = MCom.Callbacks["god_inp_test"],
+            category = "special",
+            fallback = "god_inp_test"
+        },
+        ["god_periphs"] = {
+            name = "Peripheral test",
+            desc = "Wraps monitor, clears and writes something",
+            action = MCom.Callbacks["god_periphs"],
+            category = "special",
+            fallback = "god_periphs",
+            preconditions = MCom.Callbacks["god_periphs_pre"],
+            arguments = {
+                {
+                    name = "monIdenifier",
+                    type = "string",
+                    optional = false
+                }
+            }
         }
     }
 }

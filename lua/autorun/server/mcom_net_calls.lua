@@ -40,6 +40,14 @@ function MCom.net.configure(perip, comp, ply)
     net.Send(ply)
 end
 
+function MCom.net.sendLazy(ply, ent, data, isOutput)
+    net.Start("MCom_LazyLoadReturnCL")
+    net.WriteEntity(ent)
+    net.WriteBool(isOutput)
+    net.WriteString(util.TableToJSON(data))
+    net.Send(ply)
+end
+
 
 
 
@@ -73,4 +81,32 @@ net.Receive("MCom_CloseTerminal", function(len, ply)
     local terminal = net.ReadEntity()
     if not IsValid(terminal) then return end
     terminal:endUse()
+end)
+
+net.Receive("MCom_LazyLoad", function(len, ply)
+    local ent = net.ReadEntity()
+    local isOutput = net.ReadBool()
+    if not IsValid(ent) then return end
+    
+    local data = {}
+
+    if ent.isPeripheral then
+        for _,v in ipairs(ent.Ports) do
+            if (v.read and not isOutput) or ((not v.read) and isOutput) then -- read xor isOutput
+                table.insert(data, v)
+            end
+        end
+    elseif ent.isComputer then
+        if isOutput then
+            for i = 1,ent.portCount do
+                table.insert(data, ent:getOutput(i))
+            end
+        else
+            for i = 1,ent.portCount do
+                table.insert(data, ent:getInput(i))
+            end
+        end
+    end
+
+    MCom.net.sendLazy(ply, ent, data, isOutput)
 end)

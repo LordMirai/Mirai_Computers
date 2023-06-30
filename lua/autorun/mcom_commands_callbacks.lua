@@ -330,6 +330,25 @@ MCom.Callbacks["god_inp_test"] = function(ply, origin)
     origin:run("")
 end
 
+MCom.Callbacks["god_periphs_pre"] = function(ply, origin, monIdentifier) -- ? checks if 
+    local mon = origin:getPeripheral(monIdentifier)
+    if mon then
+        if mon.isMonitor then
+            return true
+        end
+    end
+    origin:output("Monitor not connected or wrong params")
+    return false
+end
+
+MCom.Callbacks["god_periphs"] = function(ply, origin, monIdentifier)
+    local msg = "GOD protocol - peripheral test\n"
+    origin:output(msg)
+    origin:run("peripheral wrap " .. monIdentifier .. " mon")
+    origin:run("mon clear")
+    origin:run("mon write This should be a thing huh?")
+end
+
 
 
 -- ? Registers
