@@ -3,10 +3,10 @@ MCom.net = MCom.net or {}
 
 local net = net
 
--- ! This file serves the simple net messages, without cluttering the main files. This covers both sending and receiving messages (serverside)
+-- ? This file serves to fire and compact net messages, without cluttering the main files. This covers both sending and receiving messages (serverside)
 
 -- ! SENDING
-function MCom.net.sendMessage(ply,msg,col,full)
+function MCom.net.sendMessage(ply, msg, col, full)
     net.Start("MCom_Message")
     net.WriteString(msg)
     net.WriteColor(col)
@@ -14,7 +14,7 @@ function MCom.net.sendMessage(ply,msg,col,full)
     net.Send(ply)
 end
 
-function MCom.net.broadcast(msg,col)
+function MCom.net.broadcast(msg, col)
     net.Start("MCom_Message")
     net.WriteString(msg)
     net.WriteColor(col)
@@ -52,7 +52,7 @@ end
 
 
 -- * RECEIVING
-net.Receive("MCom_RequestMessage", function(len,ply)
+net.Receive("MCom_RequestMessage", function(len, ply)
     local ent = net.ReadEntity()
     local msg = net.ReadString()
     local col = net.ReadColor()
@@ -70,7 +70,7 @@ net.Receive("MCom_ExecuteCommand", function(len, ply)
     local origin = net.ReadEntity()
     local cmd = net.ReadString()
 
-    print(issuer, origin, cmd)
+    -- print(issuer, origin, cmd)
 
     if not IsValid(issuer) or not IsValid(origin) then return end
     origin:executeCommand(issuer, cmd)
@@ -91,18 +91,18 @@ net.Receive("MCom_LazyLoad", function(len, ply)
     local data = {}
 
     if ent.isPeripheral then
-        for _,v in ipairs(ent.Ports) do
+        for _, v in ipairs(ent.Ports) do
             if (v.read and not isOutput) or ((not v.read) and isOutput) then -- read xor isOutput
                 table.insert(data, v)
             end
         end
     elseif ent.isComputer then
         if isOutput then
-            for i = 1,ent.portCount do
+            for i = 1, ent.portCount do
                 table.insert(data, ent:getOutput(i))
             end
         else
-            for i = 1,ent.portCount do
+            for i = 1, ent.portCount do
                 table.insert(data, ent:getInput(i))
             end
         end

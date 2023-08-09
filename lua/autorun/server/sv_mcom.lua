@@ -38,6 +38,4 @@ hook.Add("PlayerDisconnected", "MCom_unuseDisconnect", function(ply)
 end)
 
 
-
-
 print("sv_mcom.lua reloaded")

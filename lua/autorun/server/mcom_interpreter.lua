@@ -78,25 +78,21 @@ function MCom.Interpreter.executeCommand(ply, origin, stringIn) -- main function
     cmd = string.lower(cmd)
     local cmdData = MCom.Systems["none"].commands[cmd] -- get the command data, first seeks standalone ("none" system)
     local group = MCom.Systems[cmd]
-    -- PrintTable(cmdData)
 
     local subcommand = argsNoCase[2] or nil
     
     if group then -- group exists, cmd not standalone
-        print("IT IS A SYSTEM INDEED\n")
-        print(group.groupAction)
+        -- print("IT IS A SYSTEM INDEED\n")
+        -- print(group.groupAction)
         cmdData = subcommand and group.commands[subcommand] or group.groupAction -- if there is an argument, use the subcommand, otherwise use the group action
-        print(cmdData)
+        -- print(cmdData)
     end
 
     if not cmdData then -- the command doesn't exist
         local msg = string.format("Command %s does not exist.", cmd)
-        -- MCom.Interpreter.warning(msg)
         MCom.Error(ply, msg)
         return MCom.stdErr(msg)
     end
-
-    -- PrintTable(cmdData)
 
     if not cmdData.name then cmdData.name = cmd end -- fallback in case the command doesn't have a pretty name
     if not cmdData.action then -- if the command doesn't have an action
@@ -169,8 +165,6 @@ end
 
 function MCom.Interpreter.wrapFunction(ply, origin, cmdData, arguments) -- wrap the function
     -- only preconditions are required to pass, if they exist
-
-    -- PrintTable(cmdData)
 
     if IsPlayer(ply) then
         if cmdData.admin then

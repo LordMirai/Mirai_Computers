@@ -38,7 +38,7 @@ hook.Add("InitPostEntity", "MCom_PairCommandsToGroups", function()
 
     timer.Simple(1, function() -- we wait a bit, for any other command initialization to finish
         MCom.refreshCommands()
-        MCom.hotReload = true
+        MCom.hotReload = true -- enable reload on save
     end)
 end)
 
@@ -71,7 +71,6 @@ end)
     Normally, the origin should NEVER be nil, as commands should only matter to it.
 ]]
 
--- ! current group-command action system is non functional, replacing with global Systems table
 
 -- ! make sure the systems are written *AFTER* the callbacks are defined, or else it will not work.
 -- ^ at this point, the action property is basically useless, but it's good to have
@@ -239,7 +238,7 @@ MCom.Systems["io"] = {
     }
 }
 
-MCom.Systems["none"] = { -- * will need a fallback implementation to recognize
+MCom.Systems["none"] = {
     -- no group action
     commands = {
         ["tick"] = {
@@ -293,7 +292,7 @@ MCom.Systems["none"] = { -- * will need a fallback implementation to recognize
         },
         ["random"] = {
             name = "Random",
-            desc = "Gets a random value",
+            desc = "Gets a random value in range",
             action = MCom.Callbacks["random"],
             help = "random (register) (min = 0) (max = 100)",
             example = "random Y 32 64",

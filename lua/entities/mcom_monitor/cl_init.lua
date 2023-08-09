@@ -28,19 +28,20 @@ local function lineBreak(txt)
 	return string.Implode("\n", lines)
 end
 
-function ENT:DrawTranslucent()
+function ENT:DrawTranslucent(fl)
+	self:Draw(fl) -- default draw
+
 	if self.dirty then
 		self.dirty = false
 		self:CreateScreen()
 	end
 
 	local ang = self:GetAngles()
-	ang:RotateAroundAxis(ang:Up(), 90)
+	ang:RotateAroundAxis(ang:Up(), -90)
 	ang:RotateAroundAxis(ang:Forward(), 90)
 
 	cam.Start3D2D(self:GetPos() + self:GetUp() * 10, ang, 0.1)
 		surface.SetDrawColor(self.color)
-		surface.SetMaterial(self.screen)
 		surface.DrawTexturedRect(0, 0, 512, 512)
 
 		-- Draw text

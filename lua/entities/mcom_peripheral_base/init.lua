@@ -33,6 +33,9 @@ function ENT:init() -- ovr ent_base
 		end
 	end)
 
+	-- * Peripheral actions are functions that can be called by the computer
+	-- * They should be callable by the peripheral itself too
+	-- ^ It is recommended that you use a :action() function calls instead of .actions["action"]()
 	self.actions = {
 		["info"] = function(ply, origin)
 			origin:output(self:connectionInfo())

@@ -22,7 +22,7 @@ function MCom.entUseCooldown(ply, ent)
             if not IsValid(ent) then return end
 
             ply.MComNoUse[ent:GetClass()] = nil -- unregister no use
-            print("cooldown over for "..ent:GetClass())
+            print("cooldown over for " .. ent:GetClass())
         end)
     end
 end

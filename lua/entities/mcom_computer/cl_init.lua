@@ -8,6 +8,7 @@ end
 -- will write stdout to CHAT, without much formatting, until display exists
 
 function ENT:tempMenu()
+	local ply = LocalPlayer()
 
 	local frame = vgui.Create("DFrame")
 	frame:SetSize(400, 70)
@@ -23,10 +24,12 @@ function ENT:tempMenu()
 	text.OnEnter = function()
 		local cmd = text:GetValue()
 		cmd = string.Trim(cmd)
-		MCom.net.terminalCommand(LocalPlayer(),self,cmd)
+		MCom.net.terminalCommand(ply, self, cmd)
 		text:SetText("")
 		text:RequestFocus()
 	end
+
+	ply.terminalMenu = frame
 
 	function frame:OnClose()
 		MCom.net.terminalClose(self)

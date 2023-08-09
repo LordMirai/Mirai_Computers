@@ -52,3 +52,21 @@ function ENT:onConnected(parent)
 end
 
 function ENT:setupPorts() end -- no ports for now
+
+-- * actions implementation
+function ENT:info(ply)
+	self.actions["info"](ply, self)
+end
+
+function ENT:clear(ply)
+	self.actions["clear"](ply, self)
+end
+
+function ENT:write(ply, ...)
+	local args = {...}
+	self.actions["write"](ply, self, unpack(args))
+end
+
+function ENT:color(ply, colStr)
+	self.actions["color"](ply, self, colStr)
+end

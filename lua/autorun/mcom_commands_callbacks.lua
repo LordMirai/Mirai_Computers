@@ -86,6 +86,10 @@ MCom.Callbacks["random"] = function(ply, origin, reg, min, max)
     min = min or 0
     max = max or 100
 
+    if min > max then -- swap
+        min, max = max, min
+    end
+
     local rand = math.random(min, max)
     local success = origin:write(reg, rand, false)
     if success then
@@ -93,6 +97,12 @@ MCom.Callbacks["random"] = function(ply, origin, reg, min, max)
     else
         origin:output("Failed to write to register. Register does not exist.")
     end
+end
+
+MCom.Callbacks["delay"] = function(ply, origin, ticks, pin)
+    origin:wait(math.Clamp(ticks, 1, 50), function(origin) -- this effectively waits for one tick then proceeds to execute the rest
+        origin:setOutput(pin, true)
+    end, origin)
 end
 
 -- ? Network system
@@ -252,11 +262,11 @@ end
 
 MCom.Callbacks["peripheral_bind"] = function(ply, origin, identifier, reg) -- binding a peripheral to a register
     if not reg then reg = "P" end
-    local msg = string.format("Wrapping peripheral %s to register %s...\n", identifier, reg)
+    local msg = string.format("Binding peripheral %s to register %s...\n", identifier, reg)
     origin:output(msg)
     local per = origin:getPeripheral(identifier)
     if per then
-        local wrapped = per:wrap()
+        origin:write(reg, per, false)
         if wrapped then
             msg = string.format("Peripheral %s bound to register %s!\n", identifier, reg)
         else
@@ -371,7 +381,7 @@ MCom.Callbacks["reg_write"] = function(ply, origin, regIn, val)
 
     local msg = string.format("Register %s set to value %s", regIn, tostring(val))
     origin:output(msg)
-    origin:write(regIn, val)
+    origin:write(regIn, val, false)
 end
 
 MCom.Callbacks["reg_getall"] = function(ply, origin)

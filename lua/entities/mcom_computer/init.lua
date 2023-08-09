@@ -213,6 +213,7 @@ end
 
 function ENT:tick()
 	self:incTC() -- increment tick counter
+	self:checkDeregister() -- check if the user has left the computer
 end
 
 function ENT:selectPort()
@@ -361,4 +362,14 @@ end
 
 function ENT:run(cmd) -- shorthand for CLI execution (mostly GOD protocol)
 	self:executeCommand(nil, cmd)
+end
+
+function ENT:checkDeregister()
+	local us = self:GetUser()
+	if us:IsValid() then
+		local dist = us:GetPos():DistToSqr(self:GetPos())
+		if dist > MCom.computerDistanceLimit then
+			self:endUse()
+		end
+	end
 end
