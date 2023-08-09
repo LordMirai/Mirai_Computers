@@ -1,14 +1,14 @@
 include("shared.lua")
 
+local charLimit = 200 -- change if needed, this is placeholder
+
 function ENT:Draw()
 	self:DrawModel()
 end
 
 function ENT:Initialize()
-	self.color = MCom.Colors.Indigo
+	self.color = MCom.Colors.White
 	self.dirty = true -- Force update
-
-	self.charLimit = 200 -- change if needed, this is placeholder
 
 	self:CreateScreen()
 end
@@ -18,7 +18,7 @@ local function lineBreak(txt)
 	local lines = {}
 	local line = ""
 	for i, word in ipairs(words) do
-		if surface.GetTextSize(line .. word) > self.charLimit then
+		if surface.GetTextSize(line .. word) > charLimit then
 			table.insert(lines, line)
 			line = ""
 		end

@@ -77,7 +77,7 @@ MCom.Callbacks["clock"] = function(ply, origin, pin, interval)
     clock(origin, pin, interval)
 end
 
-MCom.Callbacks["echo"] = function(ply origin, ...) -- not sure how I haven't implemented this yet
+MCom.Callbacks["echo"] = function(ply, origin, ...) -- not sure how I haven't implemented this yet
     local msg = table.concat({...}, " ")
     origin:output(msg)
 end

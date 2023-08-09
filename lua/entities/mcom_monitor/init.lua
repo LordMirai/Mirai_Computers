@@ -10,8 +10,8 @@ function ENT:peripheralInit() -- ovr peripheral_base
 	self.isMonitor = true
 	self:SetText("") -- actual text on monitor. must and will be changed to fit anything.
 	
-	local mdl = "" -- model here
-	self:setup(mdl, "Monitor", false, "TTP")
+	local mdl = "models/kobilica/wiremonitorbig.mdl" -- model here
+	self:setup(mdl, "Monitor", false, "MON")
 
 	self.actions = {
 		["info"] = function(ply, origin)
@@ -69,4 +69,7 @@ end
 
 function ENT:color(ply, colStr)
 	self.actions["color"](ply, self, colStr)
+
+function ENT:onUse(ply)
+	MCom.Message(ply, "Mon text | "..self:GetText())
 end

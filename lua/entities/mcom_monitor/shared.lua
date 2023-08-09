@@ -1,7 +1,8 @@
 ENT.Type = "anim"
 ENT.Base = "mcom_peripheral_base" -- test if this works
 
-ENT.PrintName = "Peripheral Template"
+ENT.PrintName = "Monitor"
+ENT.Category = "Mirai Computer System"
 
 ENT.Spawnable = true -- set this to false in template
 ENT.AdminOnly = true

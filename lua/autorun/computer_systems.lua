@@ -216,7 +216,7 @@ MCom.Systems["io"] = {
             example = "io toggle 1",
             category = "io",
             fallback = "io_toggle"
-        }
+        },
         ["getall"] = {
             name = "Get all",
             desc = "Gets the value of all input pins",
@@ -280,7 +280,7 @@ MCom.Systems["none"] = {
             desc = "Echoes the given text",
             action = MCom.Callbacks["echo"],
             help = "echo (text)",
-            example "echo this is a test",
+            example = "echo this is a test",
             fallback = "echo",
             arguments = {
                 {
